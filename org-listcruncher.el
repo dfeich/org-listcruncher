@@ -42,37 +42,57 @@
     (list outp descr varlst))
   )
 
-(defun org-listcruncher-parselist (lst inheritvars)
+(defun org-listcruncher--sparse-to-table (sparselst)
+  "TODO"
+  )
+
+(defun org-listcruncher-parselist (lst inheritvars resultlst)
+  "Parse an org list into a table structure.
+
+LST is a list as produced from `org-list-to-lisp'. INHERITVARS is
+an association list of (varname value) pairs that constitute the
+inherited variable values from the parent.  RESULTLST contains the
+current result structure in form of a list of association lists.  Each
+contained association list corresponds to a later table row."
   (let ((ltype (car lst))
-	(itemstructs (cdr lst)))
-    (cl-loop for struct in itemstructs
-	     with joinedsubvarlst = nil
-	     do (let ((itemtext (car struct))
-		      (sublist (cadr struct))
-		      itemvarlst subtreevarlst outvarlst)
-		  ;; parse this item
-		  (let* ((prsitem (org-listcruncher-parseitem-default itemtext))
-			 (outp (car prsitem))
-			 (descr (nth 1 prsitem))
-			 (itemvarlst (nth 2 prsitem)))
-		    ;; (princ (format "DEBUG: item [%s] varlst: %s\n" descr itemvarlst))
-		    ;; if item has a sublist, recurse with this sublist and get varlst of this tree
-		    (when sublist
-		      (setq subtreevarlst (org-listcruncher-parselist sublist
-								      (append itemvarlst inheritvars)))
-		      ;;(princ (format "DEBUG: received subtreevarlst %s\n" subtreevarlst))
-		      )
-		    ;; only prepare an output line if this item is flagged as an output item
-		    (when outp
-		      (setq outvarlst (append subtreevarlst itemvarlst inheritvars))
-		      (princ (format "line: %s\n   varlst: %s\n"
-				     descr
-				     outvarlst
-				     )))
-		    ;; accumulate all item's varlists for returning to parent item
-		    (setq joinedsubvarlst (append subtreevarlst itemvarlst joinedsubvarlst))))
-	     ;; we return the consolidated varlst of this tree
-	     finally return joinedsubvarlst)))
+	(itemstructs (cdr lst))
+	retvarlst)
+    (setq retvarlst
+	  (cl-loop for struct in itemstructs
+		   with joinedsubvarlst = nil
+		   do (let ((itemtext (car struct))
+			    (sublist (cadr struct))
+			    itemvarlst subtreevarlst outvarlst)
+			;; parse this item
+			(let* ((prsitem (org-listcruncher-parseitem-default itemtext))
+			       (outp (car prsitem))
+			       (descr (nth 1 prsitem))
+			       (itemvarlst (nth 2 prsitem)))
+			  ;; (princ (format "DEBUG: item [%s] varlst: %s\n" descr itemvarlst))
+			  ;; if item has a sublist, recurse with this sublist and get varlst of this tree
+			  (when sublist
+			    (let ((parseresult (org-listcruncher-parselist sublist
+									   (append itemvarlst inheritvars)
+									   resultlst)))
+			      (setq subtreevarlst (car parseresult))
+			      (setq resultlst (cadr parseresult)))
+			    ;;(princ (format "DEBUG: received subtreevarlst %s\n" subtreevarlst))
+			    )
+			  ;; only prepare an output line if this item is flagged as an output item
+			  (when outp
+			    ;; the current item's description always is placed first in the list
+			    (setq outvarlst (append `(("descr" ,descr)) subtreevarlst itemvarlst inheritvars))
+			    (setq resultlst (append resultlst (list outvarlst)))
+			    ;; (princ (format "line: %s\n   varlst: %s\n"
+			    ;; 		   descr
+			    ;; 		   outvarlst))
+			    )
+			  ;; accumulate all item's varlists for returning to parent item
+			  (setq joinedsubvarlst (append subtreevarlst itemvarlst joinedsubvarlst))))
+		   ;; we return the consolidated varlst of this tree
+		   finally return joinedsubvarlst))
+    (list retvarlst resultlst)
+    ))
 
 (provide 'org-listcruncher)
 ;;; org-listcruncher.el ends here
