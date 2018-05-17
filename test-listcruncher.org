@@ -12,9 +12,24 @@
     - item: a category item C (kCHF: 30)
       - a modification to category item C (kCHF: 25, recur: 3)
 
+  #+BEGIN_SRC elisp :results value :var lname="ltot-test"
+    (org-listcruncher-to-table lname)
+  #+END_SRC
 
+  #+RESULTS:
+  | descr             | other | kCHF | recur | until |
+  | First item        | 299   |   20 |     1 | 2020  |
+  | second item       | nil   |   50 |     4 | nil   |
+  | a category item A | nil   |   10 |     5 | nil   |
+  | a category item B | nil   |   20 |     5 | nil   |
+  | a category item C | nil   |   25 |     3 | nil   |
+
+
+  
+
+  A look at the main heavy lifting function and its return values:
   #+BEGIN_SRC elisp :results output :var lname="ltot-test"
-    (pp (org-listcruncher-parselist (save-excursion
+    (pp (org-listcruncher--parselist (save-excursion
 				      (goto-char (point-min))
 				      (unless (search-forward-regexp (concat  "#\\\+NAME: .*" lname) nil t)
 					(error "No list of this name found: %s" lname))
@@ -64,32 +79,9 @@
   #+end_example
 
 
-  Reference
-  #+begin_example
-  line: First item 
-     varlst: ((other 299) (other 500) (kCHF 20) (kCHF 15) (recur 1) (until 2020))
-  line: second item 
-     varlst: ((kCHF 50) (recur 4))
-  line: a category item A 
-     varlst: ((kCHF 10) (recur 5))
-  line: a category item B 
-     varlst: ((kCHF 20) (recur 5))
-  line: a category item C 
-     varlst: ((kCHF 25) (recur 3) (kCHF 30) (recur 5))
-  (("kCHF" "25")
-   ("recur" "3")
-   ("kCHF" "30")
-   ("kCHF" "20")
-   ("kCHF" "10")
-   ("recur" "5")
-   ("kCHF" "50")
-   ("recur" "4")
-   ("other" "299")
-   ("other" "500")
-   ("kCHF" "20")
-   ("kCHF" "15")
-   ("recur" "1")
-   ("until" "2020"))
-  #+end_example
 
 
+* COMMENT Org Babel settings
+Local variables:
+org-confirm-babel-evaluate: nil
+End:

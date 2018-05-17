@@ -28,8 +28,14 @@
 (require 'cl-lib)
 
 (defun org-listcruncher-parseitem-default (line)
+  "Default list item parsing function for org-listcruncher.
+
+LINE is the list item to be parsed.  Outputting of a line is
+triggered by having 'item:' at the start of the line.  The
+description is a string.  The key value pairs are given after the
+description in a format of (key1: val1, key2: val2, ...)."
   (let (outp descr varstr varlst)
-    (if (string-match "\\\(item:\\\)? *\\\([^(]*\\\) *\\\((\\\(.*\\\))\\\)?" line)
+    (if (string-match "^ *\\\(item:\\\)? *\\\([^(]*\\\) *\\\((\\\(.*\\\))\\\)?" line)
 	(progn
 	  (setq outp (if (match-string 1 line) t nil)
 		descr (match-string 2 line)
@@ -43,10 +49,39 @@
   )
 
 (defun org-listcruncher--sparse-to-table (sparselst)
-  "TODO"
+  "Return list of all unique keys of the list of alists in SPARSELST."
+  (let* ((keylst
+	  ;; list of all unique keys of the list of alists in SPARSELST
+	  (cl-loop for alst in sparselst
+		   with reslst = nil
+		   collect (mapcar (lambda (kvpair) (car kvpair))  alst) into reslst
+		   finally return (seq-uniq (apply #'append  reslst))))
+	 ;; for each key, find var values in each given row in sparselist
+	 (rows
+	  (cl-loop for alst in sparselst
+		   with reslst = nil
+		   collect (mapcar (lambda (key) (cadr (assoc key alst)))
+				   keylst
+				   ) into reslst
+				     finally return reslst
+				     )))
+    (append `(,keylst) rows)))
+
+
+(defun org-listcruncher-to-table (listname)
+  "TODO LST."
+  (let ((lst 
+	 (save-excursion
+	   (goto-char (point-min))
+	   (unless (search-forward-regexp (concat  "#\\\+NAME: .*" lname) nil t)
+	     (error "No list of this name found: %s" lname))
+	   (forward-line 1)
+	   (org-list-to-lisp))))
+    (org-listcruncher--sparse-to-table
+     (cadr (org-listcruncher--parselist lst nil nil))))
   )
 
-(defun org-listcruncher-parselist (lst inheritvars resultlst)
+(defun org-listcruncher--parselist (lst inheritvars resultlst)
   "Parse an org list into a table structure.
 
 LST is a list as produced from `org-list-to-lisp'. INHERITVARS is
@@ -71,9 +106,9 @@ contained association list corresponds to a later table row."
 			  ;; (princ (format "DEBUG: item [%s] varlst: %s\n" descr itemvarlst))
 			  ;; if item has a sublist, recurse with this sublist and get varlst of this tree
 			  (when sublist
-			    (let ((parseresult (org-listcruncher-parselist sublist
-									   (append itemvarlst inheritvars)
-									   resultlst)))
+			    (let ((parseresult (org-listcruncher--parselist sublist
+									    (append itemvarlst inheritvars)
+									    resultlst)))
 			      (setq subtreevarlst (car parseresult))
 			      (setq resultlst (cadr parseresult)))
 			    ;;(princ (format "DEBUG: received subtreevarlst %s\n" subtreevarlst))
