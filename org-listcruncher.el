@@ -52,37 +52,53 @@ description in a format of (key1: val1, key2: val2, ...)."
     (list outp descr varlst))
   )
 
-(defun org-listcruncher--sparse-to-table (sparselst)
-  "Return list of all unique keys of the list of alists in SPARSELST."
+(defun org-listcruncher--sparse-to-table (sparselst &optional order)
+  "Return list of all unique keys of the list of alists in SPARSELST.
+
+If a list is provided in the ORDER argument, the table columns
+will be ordered according to this list.  The list may contain only
+a subset of the items.  The remaining columns will be added in the
+original order."
   (let* ((keylst
 	  ;; list of all unique keys of the list of alists in SPARSELST
 	  (cl-loop for alst in sparselst
 		   with reslst = nil
 		   collect (mapcar (lambda (kvpair) (car kvpair))  alst) into reslst
 		   finally return (seq-uniq (apply #'append  reslst))))
+	 (orderedlst (append order
+			     (cl-loop for elm in order
+				      do (setq keylst (delete elm keylst))
+				      finally return keylst)))
 	 ;; for each key, find var values in each given row in sparselist
 	 (rows
 	  (cl-loop for alst in sparselst
 		   with reslst = nil
-		   collect (mapcar (lambda (key) (cadr (assoc key alst)))
-				   keylst
+		   collect (mapcar (lambda (key) (or (cadr (assoc key alst))
+						     ""))
+				   orderedlst
 				   ) into reslst
 				     finally return reslst
 				     )))
-    (append `(,keylst) '(hline) rows)))
+    (append `(,orderedlst) '(hline) rows)))
 
 
-(defun org-listcruncher-to-table (listname)
-  "Return a table structure based on parsing the Org list with name LISTNAME."
+(defun org-listcruncher-to-table (listname &optional order)
+  "Return a table structure based on parsing the Org list with name LISTNAME.
+
+If a list is provided in the ORDER argument, the table columns
+will be ordered according to this list.  The list may contain only
+a subset of the items.  The remaining columns will be added in the
+original order."
   (let ((lst
 	 (save-excursion
 	   (goto-char (point-min))
-	   (unless (search-forward-regexp (concat  "#\\\+NAME: .*" lname) nil t)
-	     (error "No list of this name found: %s" lname))
+	   (unless (search-forward-regexp (concat  "#\\\+NAME: .*" listname) nil t)
+	     (error "No list of this name found: %s" listname))
 	   (forward-line 1)
 	   (org-list-to-lisp))))
     (org-listcruncher--sparse-to-table
-     (cadr (org-listcruncher--parselist lst nil nil))))
+     (cadr (org-listcruncher--parselist lst nil nil))
+     order))
   )
 
 (defun org-listcruncher--parselist (lst inheritvars resultlst)

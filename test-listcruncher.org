@@ -19,11 +19,25 @@
   #+RESULTS:
   | descr             | other | kCHF | recur | until |
   |-------------------+-------+------+-------+-------|
-  | First item        | 299   |   20 |     1 | 2020  |
-  | second item       | nil   |   50 |     4 | nil   |
-  | a category item A | nil   |   10 |     5 | nil   |
-  | a category item B | nil   |   20 |     5 | nil   |
-  | a category item C | nil   |   25 |     3 | nil   |
+  | First item        |   299 |   20 |     1 |  2020 |
+  | second item       |       |   50 |     4 |       |
+  | a category item A |       |   10 |     5 |       |
+  | a category item B |       |   20 |     5 |       |
+  | a category item C |       |   25 |     3 |       |
+
+
+  #+BEGIN_SRC elisp :results value :var lname="ltot-test"
+    (org-listcruncher-to-table lname '("descr" "kCHF" "recur"))
+  #+END_SRC
+
+  #+RESULTS:
+  | descr             | kCHF | recur | other | until |
+  |-------------------+------+-------+-------+-------|
+  | First item        |   20 |     1 |   299 |  2020 |
+  | second item       |   50 |     4 |       |       |
+  | a category item A |   10 |     5 |       |       |
+  | a category item B |   20 |     5 |       |       |
+  | a category item C |   25 |     3 |       |       |
 
 
   
