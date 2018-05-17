@@ -22,10 +22,14 @@
 
 ;;; Commentary:
 ;; TODO
+;; - allow user to define a preferred order for the output columns
 
 ;;; Code:
 (require 'org)
 (require 'cl-lib)
+
+(defcustom org-listcruncher-parse-fn #'org-listcruncher-parseitem-default
+  "Function used for parsing list items.")
 
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
@@ -65,12 +69,12 @@ description in a format of (key1: val1, key2: val2, ...)."
 				   ) into reslst
 				     finally return reslst
 				     )))
-    (append `(,keylst) rows)))
+    (append `(,keylst) '(hline) rows)))
 
 
 (defun org-listcruncher-to-table (listname)
-  "TODO LST."
-  (let ((lst 
+  "Return a table structure based on parsing the Org list with name LISTNAME."
+  (let ((lst
 	 (save-excursion
 	   (goto-char (point-min))
 	   (unless (search-forward-regexp (concat  "#\\\+NAME: .*" lname) nil t)
@@ -84,7 +88,7 @@ description in a format of (key1: val1, key2: val2, ...)."
 (defun org-listcruncher--parselist (lst inheritvars resultlst)
   "Parse an org list into a table structure.
 
-LST is a list as produced from `org-list-to-lisp'. INHERITVARS is
+LST is a list as produced from `org-list-to-lisp'.  INHERITVARS is
 an association list of (varname value) pairs that constitute the
 inherited variable values from the parent.  RESULTLST contains the
 current result structure in form of a list of association lists.  Each
@@ -99,7 +103,7 @@ contained association list corresponds to a later table row."
 			    (sublist (cadr struct))
 			    itemvarlst subtreevarlst outvarlst)
 			;; parse this item
-			(let* ((prsitem (org-listcruncher-parseitem-default itemtext))
+			(let* ((prsitem (apply org-listcruncher-parse-fn `(,itemtext)))
 			       (outp (car prsitem))
 			       (descr (nth 1 prsitem))
 			       (itemvarlst (nth 2 prsitem)))

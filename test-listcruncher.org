@@ -18,6 +18,7 @@
 
   #+RESULTS:
   | descr             | other | kCHF | recur | until |
+  |-------------------+-------+------+-------+-------|
   | First item        | 299   |   20 |     1 | 2020  |
   | second item       | nil   |   50 |     4 | nil   |
   | a category item A | nil   |   10 |     5 | nil   |
