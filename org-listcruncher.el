@@ -28,8 +28,12 @@
 (require 'org)
 (require 'cl-lib)
 
+(defgroup org-listcruncher nil
+  "Parses Org mode lists according to a parsing function and yields an org table structure."
+  :group 'org :version 25.3)
+
 (defcustom org-listcruncher-parse-fn #'org-listcruncher-parseitem-default
-  "Function used for parsing list items.")
+  "Function used for parsing list items." :group 'org-listcruncher)
 
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
@@ -82,6 +86,7 @@ original order."
     (append `(,orderedlst) '(hline) rows)))
 
 
+;;;###autoload
 (defun org-listcruncher-to-table (listname &optional order)
   "Return a table structure based on parsing the Org list with name LISTNAME.
 
@@ -92,7 +97,7 @@ original order."
   (let ((lst
 	 (save-excursion
 	   (goto-char (point-min))
-	   (unless (search-forward-regexp (concat  "#\\\+NAME: .*" listname) nil t)
+	   (unless (search-forward-regexp (concat  "^[ \t]*#\\\+NAME: .*" listname) nil t)
 	     (error "No list of this name found: %s" listname))
 	   (forward-line 1)
 	   (org-list-to-lisp))))
