@@ -11,7 +11,7 @@
   in your emacs search path and load the package using
 
   #+BEGIN_SRC elisp
-  (require org-listcruncher)
+  (require 'org-listcruncher)
   #+END_SRC
 
 ** Example usage
@@ -61,7 +61,7 @@
 
 
    We can also provide an additional argument to affect the order in which the table is rendered.
-   #+BEGIN_SRC elisp :results value :var lname="lsttest"
+   #+BEGIN_SRC elisp :results value :var lname="lsttest" :exports both
      (org-listcruncher-to-table lname '("descr" "kCHF" "recur"))
    #+END_SRC
 

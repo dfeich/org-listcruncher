@@ -1,11 +1,11 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#orge164b17)
-    1.  [Example usage](#orgeeb89cc)
+1.  [Org listcruncher](#orgdcf83e9)
+    1.  [Example usage](#orgd5de075)
 
 
-<a id="orge164b17"></a>
+<a id="orgdcf83e9"></a>
 
 # Org listcruncher
 
@@ -18,10 +18,10 @@ main features, I will submit ist as a MELPA package.
 If you want to test it already, just clone this repository, make sure that it is
 in your emacs search path and load the package using
 
-    (require org-listcruncher)
+    (require 'org-listcruncher)
 
 
-<a id="orgeeb89cc"></a>
+<a id="orgd5de075"></a>
 
 ## Example usage
 
@@ -130,4 +130,75 @@ Now we can use org-listcruncher to convert this list into a table
 We can also provide an additional argument to affect the order in which the table is rendered.
 
     (org-listcruncher-to-table lname '("descr" "kCHF" "recur"))
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">descr</th>
+<th scope="col" class="org-right">kCHF</th>
+<th scope="col" class="org-right">recur</th>
+<th scope="col" class="org-right">other</th>
+<th scope="col" class="org-right">until</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">First item</td>
+<td class="org-right">20</td>
+<td class="org-right">1</td>
+<td class="org-right">299</td>
+<td class="org-right">2020</td>
+</tr>
+
+
+<tr>
+<td class="org-left">second item</td>
+<td class="org-right">50</td>
+<td class="org-right">4</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">a category item A</td>
+<td class="org-right">10</td>
+<td class="org-right">5</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">a category item B</td>
+<td class="org-right">20</td>
+<td class="org-right">5</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">a category item C</td>
+<td class="org-right">25</td>
+<td class="org-right">3</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+</tbody>
+</table>
 
