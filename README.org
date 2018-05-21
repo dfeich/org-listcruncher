@@ -20,16 +20,16 @@
    Here is an example
 
    #+NAME: lsttest
-   - item: First item (kCHF: 15, recur: 1, until: 2020)
+   - item: First item (kCHF: 15, recurrence: 1, until: 2020)
      - modification of the first item (kCHF: 20)
      - another modification of the first item (other: 500)
        - modification of the modification (other: 299)
-   - item: second item (kCHF: 50, recur: 4)
-   - category (recur: 5)
+   - item: second item (kCHF: 50, recurrence: 4)
+   - category (recurrence: 5)
      - item: a category item A (kCHF: 10)
      - item: a category item B (kCHF: 20)
      - item: a category item C (kCHF: 30)
-       - a modification to category item C (kCHF: 25, recur: 3)
+       - a modification to category item C (kCHF: 25, recurrence: 3)
 
    The rules for writing such a planning list are
    1. Each line contains a tag defining wheter the line will become a table row. For this
@@ -51,28 +51,28 @@
    #+END_SRC
 
    #+RESULTS: src-example1
-   | description       | other | kCHF | recur | until |
-   |-------------------+-------+------+-------+-------|
-   | First item        |   299 |   20 |     1 |  2020 |
-   | second item       |       |   50 |     4 |       |
-   | a category item A |       |   10 |     5 |       |
-   | a category item B |       |   20 |     5 |       |
-   | a category item C |       |   25 |     3 |       |
+   | description       | other | kCHF | recurrence | until |
+   |-------------------+-------+------+------------+-------|
+   | First item        |   299 |   20 |          1 |  2020 |
+   | second item       |       |   50 |          4 |       |
+   | a category item A |       |   10 |          5 |       |
+   | a category item B |       |   20 |          5 |       |
+   | a category item C |       |   25 |          3 |       |
 
 
    We can also provide an additional argument to affect the order in which the table is rendered.
    #+BEGIN_SRC elisp :results value :var lname="lsttest" :exports both
-     (org-listcruncher-to-table lname '("description" "kCHF" "recur"))
+     (org-listcruncher-to-table lname '("description" "kCHF" "recurrence"))
    #+END_SRC
 
    #+RESULTS:
-   | description       | kCHF | recur | other | until |
-   |-------------------+------+-------+-------+-------|
-   | First item        |   20 |     1 |   299 |  2020 |
-   | second item       |   50 |     4 |       |       |
-   | a category item A |   10 |     5 |       |       |
-   | a category item B |   20 |     5 |       |       |
-   | a category item C |   25 |     3 |       |       |
+   | description       | kCHF | recurrence | other | until |
+   |-------------------+------+------------+-------+-------|
+   | First item        |   20 |          1 |   299 |  2020 |
+   | second item       |   50 |          4 |       |       |
+   | a category item A |   10 |          5 |       |       |
+   | a category item B |   20 |          5 |       |       |
+   | a category item C |   25 |          3 |       |       |
 
 
   
@@ -93,40 +93,40 @@
    #+RESULTS:
    #+begin_example
    ((("kCHF" "25")
-     ("recur" "3")
+     ("recurrence" "3")
      ("kCHF" "30")
      ("kCHF" "20")
      ("kCHF" "10")
-     ("recur" "5")
+     ("recurrence" "5")
      ("kCHF" "50")
-     ("recur" "4")
+     ("recurrence" "4")
      ("other" "299")
      ("other" "500")
      ("kCHF" "20")
      ("kCHF" "15")
-     ("recur" "1")
+     ("recurrence" "1")
      ("until" "2020"))
     ((("description" "First item ")
       ("other" "299")
       ("other" "500")
       ("kCHF" "20")
       ("kCHF" "15")
-      ("recur" "1")
+      ("recurrence" "1")
       ("until" "2020"))
      (("description" "second item ")
       ("kCHF" "50")
-      ("recur" "4"))
+      ("recurrence" "4"))
      (("description" "a category item A ")
       ("kCHF" "10")
-      ("recur" "5"))
+      ("recurrence" "5"))
      (("description" "a category item B ")
       ("kCHF" "20")
-      ("recur" "5"))
+      ("recurrence" "5"))
      (("description" "a category item C ")
       ("kCHF" "25")
-      ("recur" "3")
+      ("recurrence" "3")
       ("kCHF" "30")
-      ("recur" "5"))))
+      ("recurrence" "5"))))
    #+end_example
 
 
@@ -144,13 +144,13 @@
   #+RESULTS:
   :RESULTS:
   #+CAPTION: Example 1
-  |descr|other|kCHF|recur|until|
+  ||description|other|kCHF|recurrence|until|
   |-----
-  |First item |299|20|1|2020|
-  |second item ||50|4||
-  |a category item A ||10|5||
-  |a category item B ||20|5||
-  |a category item C ||25|3||
+  |1|First item |299|20|1|2020|
+  |2|second item ||50|4||
+  |3|a category item A ||10|5||
+  |4|a category item B ||20|5||
+  |5|a category item C ||25|3||
 
   :END:
 

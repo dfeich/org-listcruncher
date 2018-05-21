@@ -1,11 +1,11 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#orgc2af4f1)
-    1.  [Example usage](#org56ef190)
+1.  [Org listcruncher](#org35a3980)
+    1.  [Example usage](#org23bde50)
 
 
-<a id="orgc2af4f1"></a>
+<a id="org35a3980"></a>
 
 # Org listcruncher
 
@@ -21,23 +21,23 @@ in your emacs search path and load the package using
     (require 'org-listcruncher)
 
 
-<a id="org56ef190"></a>
+<a id="org23bde50"></a>
 
 ## Example usage
 
 Write a planning list and give it a name using the appropriate Org syntax (e.g. `#+NAME: lsttest`).
 Here is an example
 
--   item: First item (kCHF: 15, recur: 1, until: 2020)
+-   item: First item (kCHF: 15, recurrence: 1, until: 2020)
     -   modification of the first item (kCHF: 20)
     -   another modification of the first item (other: 500)
         -   modification of the modification (other: 299)
--   item: second item (kCHF: 50, recur: 4)
--   category (recur: 5)
+-   item: second item (kCHF: 50, recurrence: 4)
+-   category (recurrence: 5)
     -   item: a category item A (kCHF: 10)
     -   item: a category item B (kCHF: 20)
     -   item: a category item C (kCHF: 30)
-        -   a modification to category item C (kCHF: 25, recur: 3)
+        -   a modification to category item C (kCHF: 25, recurrence: 3)
 
 The rules for writing such a planning list are
 
@@ -75,7 +75,7 @@ Now we can use org-listcruncher to convert this list into a table
 <th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">other</th>
 <th scope="col" class="org-right">kCHF</th>
-<th scope="col" class="org-right">recur</th>
+<th scope="col" class="org-right">recurrence</th>
 <th scope="col" class="org-right">until</th>
 </tr>
 </thead>
@@ -129,7 +129,7 @@ Now we can use org-listcruncher to convert this list into a table
 
 We can also provide an additional argument to affect the order in which the table is rendered.
 
-    (org-listcruncher-to-table lname '("description" "kCHF" "recur"))
+    (org-listcruncher-to-table lname '("description" "kCHF" "recurrence"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -149,7 +149,7 @@ We can also provide an additional argument to affect the order in which the tabl
 <tr>
 <th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">kCHF</th>
-<th scope="col" class="org-right">recur</th>
+<th scope="col" class="org-right">recurrence</th>
 <th scope="col" class="org-right">other</th>
 <th scope="col" class="org-right">until</th>
 </tr>
