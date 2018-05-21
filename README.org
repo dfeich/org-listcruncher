@@ -51,7 +51,7 @@
    #+END_SRC
 
    #+RESULTS: src-example1
-   | descr             | other | kCHF | recur | until |
+   | description       | other | kCHF | recur | until |
    |-------------------+-------+------+-------+-------|
    | First item        |   299 |   20 |     1 |  2020 |
    | second item       |       |   50 |     4 |       |
@@ -62,11 +62,11 @@
 
    We can also provide an additional argument to affect the order in which the table is rendered.
    #+BEGIN_SRC elisp :results value :var lname="lsttest" :exports both
-     (org-listcruncher-to-table lname '("descr" "kCHF" "recur"))
+     (org-listcruncher-to-table lname '("description" "kCHF" "recur"))
    #+END_SRC
 
    #+RESULTS:
-   | descr             | kCHF | recur | other | until |
+   | description       | kCHF | recur | other | until |
    |-------------------+------+-------+-------+-------|
    | First item        |   20 |     1 |   299 |  2020 |
    | second item       |   50 |     4 |       |       |
@@ -106,23 +106,23 @@
      ("kCHF" "15")
      ("recur" "1")
      ("until" "2020"))
-    ((("descr" "First item ")
+    ((("description" "First item ")
       ("other" "299")
       ("other" "500")
       ("kCHF" "20")
       ("kCHF" "15")
       ("recur" "1")
       ("until" "2020"))
-     (("descr" "second item ")
+     (("description" "second item ")
       ("kCHF" "50")
       ("recur" "4"))
-     (("descr" "a category item A ")
+     (("description" "a category item A ")
       ("kCHF" "10")
       ("recur" "5"))
-     (("descr" "a category item B ")
+     (("description" "a category item B ")
       ("kCHF" "20")
       ("recur" "5"))
-     (("descr" "a category item C ")
+     (("description" "a category item C ")
       ("kCHF" "25")
       ("recur" "3")
       ("kCHF" "30")

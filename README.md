@@ -1,11 +1,11 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#orgdcf83e9)
-    1.  [Example usage](#orgd5de075)
+1.  [Org listcruncher](#orgc2af4f1)
+    1.  [Example usage](#org56ef190)
 
 
-<a id="orgdcf83e9"></a>
+<a id="orgc2af4f1"></a>
 
 # Org listcruncher
 
@@ -21,7 +21,7 @@ in your emacs search path and load the package using
     (require 'org-listcruncher)
 
 
-<a id="orgd5de075"></a>
+<a id="org56ef190"></a>
 
 ## Example usage
 
@@ -72,7 +72,7 @@ Now we can use org-listcruncher to convert this list into a table
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="org-left">descr</th>
+<th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">other</th>
 <th scope="col" class="org-right">kCHF</th>
 <th scope="col" class="org-right">recur</th>
@@ -129,7 +129,7 @@ Now we can use org-listcruncher to convert this list into a table
 
 We can also provide an additional argument to affect the order in which the table is rendered.
 
-    (org-listcruncher-to-table lname '("descr" "kCHF" "recur"))
+    (org-listcruncher-to-table lname '("description" "kCHF" "recur"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -147,7 +147,7 @@ We can also provide an additional argument to affect the order in which the tabl
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="org-left">descr</th>
+<th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">kCHF</th>
 <th scope="col" class="org-right">recur</th>
 <th scope="col" class="org-right">other</th>

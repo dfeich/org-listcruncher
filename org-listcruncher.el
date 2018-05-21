@@ -141,7 +141,7 @@ contained association list corresponds to a later table row."
 			  ;; only prepare an output line if this item is flagged as an output item
 			  (when outp
 			    ;; the current item's description always is placed first in the list
-			    (setq outvarlst (append `(("descr" ,descr)) subtreevarlst itemvarlst inheritvars))
+			    (setq outvarlst (append `(("description" ,descr)) subtreevarlst itemvarlst inheritvars))
 			    (setq resultlst (append resultlst (list outvarlst)))
 			    ;; (princ (format "line: %s\n   varlst: %s\n"
 			    ;; 		   descr
