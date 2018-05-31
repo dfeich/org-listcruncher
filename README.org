@@ -20,12 +20,12 @@
    Here is an example
 
    #+NAME: lsttest
-   - item: First item (kCHF: 15, recurrence: 1, until: 2020)
+   - item: First item (kCHF: 15, recurrence: 1, end-year: 2020)
      - modification of the first item (kCHF: 20)
      - another modification of the first item (other: 500)
        - modification of the modification (other: 299)
-   - item: second item (kCHF: 50, recurrence: 4)
-   - category (recurrence: 5)
+   - item: second item (kCHF: 50, recurrence: 4, end-year: 2026)
+   - category (recurrence: 2, end-year: 2024)
      - item: a category item A (kCHF: 10)
      - item: a category item B (kCHF: 20)
      - item: a category item C (kCHF: 30)
@@ -51,13 +51,13 @@
    #+END_SRC
 
    #+RESULTS: src-example1
-   | description       | other | kCHF | recurrence | until |
-   |-------------------+-------+------+------------+-------|
-   | First item        |   299 |   20 |          1 |  2020 |
-   | second item       |       |   50 |          4 |       |
-   | a category item A |       |   10 |          5 |       |
-   | a category item B |       |   20 |          5 |       |
-   | a category item C |       |   25 |          3 |       |
+   | description       | other | kCHF | recurrence | end-year |
+   |-------------------+-------+------+------------+----------|
+   | First item        |   299 |   20 |          1 |     2020 |
+   | second item       |       |   50 |          4 |     2026 |
+   | a category item A |       |   10 |          2 |     2024 |
+   | a category item B |       |   20 |          2 |     2024 |
+   | a category item C |       |   25 |          3 |     2024 |
 
 
    We can also provide an additional argument to affect the order in which the table is rendered.
@@ -66,13 +66,13 @@
    #+END_SRC
 
    #+RESULTS:
-   | description       | kCHF | recurrence | other | until |
-   |-------------------+------+------------+-------+-------|
-   | First item        |   20 |          1 |   299 |  2020 |
-   | second item       |   50 |          4 |       |       |
-   | a category item A |   10 |          5 |       |       |
-   | a category item B |   20 |          5 |       |       |
-   | a category item C |   25 |          3 |       |       |
+   | description       | kCHF | recurrence | other | end-year |
+   |-------------------+------+------------+-------+----------|
+   | First item        |   20 |          1 |   299 |     2020 |
+   | second item       |   50 |          4 |       |     2026 |
+   | a category item A |   10 |          2 |       |     2024 |
+   | a category item B |   20 |          2 |       |     2024 |
+   | a category item C |   25 |          3 |       |     2024 |
 
 
   
@@ -137,20 +137,20 @@
   #+BEGIN_SRC python :results output raw drawer :var tbl=src-example1 :colnames no
     import orgbabelhelper as obh
 
-    df = obh.orgtable_to_dataframe(tbl, index="descr")
+    df = obh.orgtable_to_dataframe(tbl, index="description")
     print(obh.dataframe_to_orgtable(df, caption="Example 1"))
   #+END_SRC
 
   #+RESULTS:
   :RESULTS:
   #+CAPTION: Example 1
-  ||description|other|kCHF|recurrence|until|
+  |description|other|kCHF|recurrence|end-year|
   |-----
-  |1|First item |299|20|1|2020|
-  |2|second item ||50|4||
-  |3|a category item A ||10|5||
-  |4|a category item B ||20|5||
-  |5|a category item C ||25|3||
+  |First item |299|20|1|2020|
+  |second item ||50|4|2026|
+  |a category item A ||10|2|2024|
+  |a category item B ||20|2|2024|
+  |a category item C ||25|3|2024|
 
   :END:
 
