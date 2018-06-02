@@ -10,7 +10,7 @@ before_install:
 
 script:
   - ls -l
-  - docker run  silex/emacs:26.1-dev /bin/bash -c "emacs --version"
-  - docker run  silex/emacs:26.1-dev /bin/bash -c "cask --version"
-#  - docker run  silex/emacs:26.1-dev /bin/bash -c "make test"
+  - docker run silex/emacs:26.1-dev /bin/bash -c "emacs --version"
+  - docker run silex/emacs:26.1-dev /bin/bash -c "cask --version"
+  - docker run --mount type=bind,source="$(pwd)",target=/build silex/emacs:26.1-dev /bin/bash -c "cd build; make test"
 #  - make test
