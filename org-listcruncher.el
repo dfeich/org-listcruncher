@@ -35,6 +35,15 @@
 (defcustom org-listcruncher-parse-fn #'org-listcruncher-parseitem-default
   "Function used for parsing list items." :group 'org-listcruncher)
 
+(defcustom org-listcruncher-consolidate-fn #'org-listcruncher-consolidate-default
+  "Function for consolidating a sequence of values for a certain key.
+
+The function must accept two arguments: KEY and LIST. The KEY is
+the key selecting the (KEY VALUE) pairs from the given LIST. The
+function must return a single value based on consolidating the
+VALUEs from the given key-value pairs. Refer to the default
+function `org-listcruncher-consolidate-default'.")
+
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
 
@@ -77,12 +86,13 @@ original order."
 	 (rows
 	  (cl-loop for alst in sparselst
 		   with reslst = nil
-		   collect (mapcar (lambda (key) (or (cadr (assoc key alst))
-						     ""))
+		   collect (mapcar (lambda (key)
+				     (apply org-listcruncher-consolidate-fn (list key alst))
+				     )
 				   orderedlst
 				   ) into reslst
-				     finally return reslst
-				     )))
+		   finally return reslst
+		   )))
     (append `(,orderedlst) '(hline) rows)))
 
 
@@ -153,6 +163,43 @@ contained association list corresponds to a later table row."
 		   finally return joinedsubvarlst))
     (list retvarlst resultlst)
     ))
+
+(defun org-listcruncher-consolidate-default (key lst)
+  "Return consolidated value for KEY out of the list LST of key-value pairs.
+
+The list is given in reverse order (stack), i.e. the newest item
+is at the beginning.
+
+Example list:\n '((\"key\" \"+10\") (\"key\" \"50\") (\"otherkey\"
+\"hello\"))
+
+When calling the function on this list with the KEY
+argument set to \"key\" it will return 60."
+  (let* ((values (cl-loop for kv in lst
+			  if (equal key (car kv))
+			  collect (cadr kv) into reslst
+			  finally return (nreverse reslst)))
+	 (result (pop values)))
+    (cl-loop for v in values
+	     with ops = nil
+    	     if (string-match "^\\\([+-/*]\\\)\\\([0-9.]+\\\(e[0-9+]\\\)?\\\)" v)
+    	     do (progn
+		  (when (eq (type-of result) 'string)
+		    (setq result (string-to-number result)))
+		  (setq result (apply (pcase (match-string 1 v)
+					("+" '+)
+					("-" '-)
+					("/" '/)
+					("*" '*))
+				      (list result (string-to-number (match-string 2 v)))))
+		  ;; (princ (format "match: ops %s  number: %s result: %s\n"
+		  ;; 		 (match-string 1 v) (match-string 2 v) (number-to-string result)))
+		  )
+	     else do (setq result v)
+	     )
+    (or result "")))
+
+
 
 (provide 'org-listcruncher)
 ;;; org-listcruncher.el ends here

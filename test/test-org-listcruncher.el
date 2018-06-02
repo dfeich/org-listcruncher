@@ -35,6 +35,20 @@
 		    hline (2 "" 1)
 		    ("" 3 -1)))))
 
+(ert-deftest consolidate-vals1 ()
+  (should
+   (equal
+    100.0
+    (org-listcruncher-consolidate-default "kCHF" '(("description" "First item ")
+						   ("kCHF" "/2")
+						   ("kCHF" "+100")
+						   ("kCHF" "1e2")
+						   ("kCHF" "+20")
+						   ("kCHF" "123")
+						   ("recurrence" "1")
+						   ("end-year" "2020"))))))
+
+
 (ert-deftest integr-list-to-table ()
   (should (equal
 	   (with-temp-buffer

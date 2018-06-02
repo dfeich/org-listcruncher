@@ -16,21 +16,43 @@
 
 ** Example usage
 
-   Write a planning list and give it a name using the appropriate Org syntax (e.g. =#+NAME: lsttest=).
+   Write a planning list and give it a name using the appropriate Org syntax (e.g. =#+NAME: lstTest=).
    Here is an example
 
-   #+NAME: lsttest
-   - item: First item (kCHF: 15, recurrence: 1, end-year: 2020)
-     - modification of the first item (kCHF: 20)
-     - another modification of the first item (other: 500)
+   #+NAME: lstTest
+   - item: item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
+     - modification of item X (amount: 20)
+     - another modification of item X (other: 500)
        - modification of the modification (other: 299)
-   - item: second item (kCHF: 50, recurrence: 4, end-year: 2026)
-   - category (recurrence: 2, end-year: 2024)
-     - item: a category item A (kCHF: 10)
-     - item: a category item B (kCHF: 20)
-     - item: a category item C (kCHF: 30)
-       - a modification to category item C (kCHF: 25, recurrence: 3)
+   - illustrating inheritance (recurrence: 2, end-year: 2024)
+     - item: item A (amount: 10)
+     - item: item B (amount: 20)
+     - item: item C (amount: 30)
+       - a modification to item C (amount: 25, recurrence: 3)
+   - item: item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
+     - modification by an operation (amount: +50)
+     - modification by an operation (amount: *1.5)
+   - item: item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
+     - modification by an operation (amount: -1e2)
 
+   We can use org-listcruncher to convert this list into a table   
+
+   #+NAME: src-example1
+   #+BEGIN_SRC elisp :results value :var lname="lstTest" :exports both
+     (org-listcruncher-to-table lname)
+   #+END_SRC
+
+   #+RESULTS: src-example1
+   | description                         | other | amount | recurrence | end-year |
+   |-------------------------------------+-------+--------+------------+----------|
+   | item X modified by replacing values |   299 |     20 |          1 |     2020 |
+   | item A                              |       |     10 |          2 |     2024 |
+   | item B                              |       |     20 |          2 |     2024 |
+   | item C                              |       |     25 |          3 |     2024 |
+   | item Y modified by operations       |       |  150.0 |          4 |     2026 |
+   | item Z entered in scientific format |       |  900.0 |          3 |     2025 |
+
+   
    The rules for writing such a planning list are
    1. Each line contains a tag defining wheter the line will become a table row. For this
       example I defined this as the string "item:". Rows without such a tag just serve as
@@ -42,44 +64,32 @@
       from the upper items.
    5. The key value of a higher order item can be overwritten by a new new value for the same key
       in a lower order line.
-
-   Now we can use org-listcruncher to convert this list into a table   
-
-   #+NAME: src-example1
-   #+BEGIN_SRC elisp :results value :var lname="lsttest" :exports both
-     (org-listcruncher-to-table lname)
-   #+END_SRC
-
-   #+RESULTS: src-example1
-   | description       | other | kCHF | recurrence | end-year |
-   |-------------------+-------+------+------------+----------|
-   | First item        |   299 |   20 |          1 |     2020 |
-   | second item       |       |   50 |          4 |     2026 |
-   | a category item A |       |   10 |          2 |     2024 |
-   | a category item B |       |   20 |          2 |     2024 |
-   | a category item C |       |   25 |          3 |     2024 |
+   6. If a given value is of the form +10, -10, /10, *10, i.e. an operator followed by a number,
+      the operation is carried out on the previous value of the respective key.
 
 
-   We can also provide an additional argument to affect the order in which the table is rendered.
-   #+BEGIN_SRC elisp :results value :var lname="lsttest" :exports both
-     (org-listcruncher-to-table lname '("description" "kCHF" "recurrence"))
+   We can also provide an additional argument to affect the order of
+   columns in which the table is produced.
+   #+BEGIN_SRC elisp :results value :var lname="lstTest" :exports both
+     (org-listcruncher-to-table lname '("description" "amount" "recurrence"))
    #+END_SRC
 
    #+RESULTS:
-   | description       | kCHF | recurrence | other | end-year |
-   |-------------------+------+------------+-------+----------|
-   | First item        |   20 |          1 |   299 |     2020 |
-   | second item       |   50 |          4 |       |     2026 |
-   | a category item A |   10 |          2 |       |     2024 |
-   | a category item B |   20 |          2 |       |     2024 |
-   | a category item C |   25 |          3 |       |     2024 |
+   | description                         | amount | recurrence | other | end-year |
+   |-------------------------------------+--------+------------+-------+----------|
+   | item X modified by replacing values |     20 |          1 |   299 |     2020 |
+   | item A                              |     10 |          2 |       |     2024 |
+   | item B                              |     20 |          2 |       |     2024 |
+   | item C                              |     25 |          3 |       |     2024 |
+   | item Y modified by operations       |  150.0 |          4 |       |     2026 |
+   | item Z entered in scientific format |  900.0 |          3 |       |     2025 |
 
 
   
 ** Tests                                                           :noexport:
 
    A look at the main heavy lifting function and its return values:
-   #+BEGIN_SRC elisp :results output :var lname="lsttest"
+   #+BEGIN_SRC elisp :results output :var lname="lstTest"
      (pp (org-listcruncher--parselist (save-excursion
 				       (goto-char (point-min))
 				       (unless (search-forward-regexp (concat  "^ *#\\\+NAME: .*" lname) nil t)
@@ -92,41 +102,60 @@
 
    #+RESULTS:
    #+begin_example
-   ((("kCHF" "25")
+   ((("amount" "-1e2")
+     ("amount" "1e3")
      ("recurrence" "3")
-     ("kCHF" "30")
-     ("kCHF" "20")
-     ("kCHF" "10")
-     ("recurrence" "5")
-     ("kCHF" "50")
+     ("end-year" "2025")
+     ("amount" "*1.5")
+     ("amount" "+50")
+     ("amount" "50")
      ("recurrence" "4")
+     ("end-year" "2026")
+     ("amount" "25")
+     ("recurrence" "3")
+     ("amount" "30")
+     ("amount" "20")
+     ("amount" "10")
+     ("recurrence" "2")
+     ("end-year" "2024")
      ("other" "299")
      ("other" "500")
-     ("kCHF" "20")
-     ("kCHF" "15")
+     ("amount" "20")
+     ("amount" "15")
      ("recurrence" "1")
-     ("until" "2020"))
-    ((("description" "First item ")
+     ("end-year" "2020"))
+    ((("description" "item X modified by replacing values ")
       ("other" "299")
       ("other" "500")
-      ("kCHF" "20")
-      ("kCHF" "15")
+      ("amount" "20")
+      ("amount" "15")
       ("recurrence" "1")
-      ("until" "2020"))
-     (("description" "second item ")
-      ("kCHF" "50")
-      ("recurrence" "4"))
-     (("description" "a category item A ")
-      ("kCHF" "10")
-      ("recurrence" "5"))
-     (("description" "a category item B ")
-      ("kCHF" "20")
-      ("recurrence" "5"))
-     (("description" "a category item C ")
-      ("kCHF" "25")
+      ("end-year" "2020"))
+     (("description" "item A ")
+      ("amount" "10")
+      ("recurrence" "2")
+      ("end-year" "2024"))
+     (("description" "item B ")
+      ("amount" "20")
+      ("recurrence" "2")
+      ("end-year" "2024"))
+     (("description" "item C ")
+      ("amount" "25")
       ("recurrence" "3")
-      ("kCHF" "30")
-      ("recurrence" "5"))))
+      ("amount" "30")
+      ("recurrence" "2")
+      ("end-year" "2024"))
+     (("description" "item Y modified by operations ")
+      ("amount" "*1.5")
+      ("amount" "+50")
+      ("amount" "50")
+      ("recurrence" "4")
+      ("end-year" "2026"))
+     (("description" "item Z entered in scientific format ")
+      ("amount" "-1e2")
+      ("amount" "1e3")
+      ("recurrence" "3")
+      ("end-year" "2025"))))
    #+end_example
 
 
@@ -144,13 +173,14 @@
   #+RESULTS:
   :RESULTS:
   #+CAPTION: Example 1
-  |description|other|kCHF|recurrence|end-year|
+  |description|other|amount|recurrence|end-year|
   |-----
-  |First item |299|20|1|2020|
-  |second item ||50|4|2026|
-  |a category item A ||10|2|2024|
-  |a category item B ||20|2|2024|
-  |a category item C ||25|3|2024|
+  |item X modified by replacing values |299|20|1|2020|
+  |item A ||10|2|2024|
+  |item B ||20|2|2024|
+  |item C ||25|3|2024|
+  |item Y modified by operations ||150.0|4|2026|
+  |item Z entered in scientific format ||900.0|3|2025|
 
   :END:
 
