@@ -1,0 +1,16 @@
+language: emacs-lisp
+
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker pull silex/emacs:26.1-dev
+  - docker run  silex/emacs:26.1-dev /bin/bash
+
+script:
+  - emacs --version
+  - cask --version
+  - make cask-update
+  - make test
