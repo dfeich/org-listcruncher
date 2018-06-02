@@ -1,8 +1,13 @@
 
 * Org listcruncher
 
-  [[https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master][file:https://travis-ci.org/dfeich/org-listcruncher.svg]
-  
+  # Note: The export of the org link with
+  # file:https://travis....?branch=master fails to be recognized and
+  # converted to a markdown image link. So I insert this directly.
+  #+BEGIN_EXPORT md
+  [![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)
+  #+END_EXPORT
+
   org-listcruncher provides a way to convert org-mode lists into
   a table structure following specific semantics.
 

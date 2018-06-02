@@ -1,15 +1,15 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org96fd2be)
-    1.  [Example usage](#orgc8b616e)
+1.  [Org listcruncher](#org24e9d94)
+    1.  [Example usage](#orgefd5358)
 
 
-<a id="org96fd2be"></a>
+<a id="org24e9d94"></a>
 
 # Org listcruncher
 
-[[<https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master>][![img](https://travis-ci.org/dfeich/org-listcruncher.svg)]
+[![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)
 
 org-listcruncher provides a way to convert org-mode lists into
 a table structure following specific semantics.
@@ -23,7 +23,7 @@ in your emacs search path and load the package using
     (require 'org-listcruncher)
 
 
-<a id="orgc8b616e"></a>
+<a id="orgefd5358"></a>
 
 ## Example usage
 
