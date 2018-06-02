@@ -8,7 +8,7 @@ all: test
 test:
 	@echo "using $(shell which $(EMACS))"
 	$(CASK) exec $(EMACS) --batch -q -l org-listcruncher.el \
-           -l test/test-org-listcruncher.el  --exec "(ert t)"
+           -l test/test-org-listcruncher.el  -f ert-run-tests-batch-and-exit
 
 org-version:
 	$(CASK) exec $(EMACS) --batch -q --exec "(princ (format \"Org version: %s\" (org-version)) t)"
