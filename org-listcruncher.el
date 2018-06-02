@@ -1,4 +1,4 @@
-;;; org-listcruncher.el --- Parse emacs org list contents into table
+;;; org-listcruncher.el --- Parse Org mode list contents into table
 
 ;; Author: Derek Feichtinger <dfeich@gmail.com>
 ;; Keywords: convenience
@@ -21,9 +21,47 @@
 
 
 ;;; Commentary:
-;; TODO
-;; - allow user to define a preferred order for the output columns
-
+;; org-listcruncher is a planning tool that allows the conversion of
+;; an Org mode list to an Org table (a list of lists).  The table can
+;; be used by other Org tables or Org code blocks for further
+;; calculations.
+;;
+;; Example:
+;;
+;;   #+NAME: lstTest
+;;   - item: item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
+;;     - modification of item X (amount: 20)
+;;     - another modification of item X (other: 500)
+;;       - modification of the modification (other: 299)
+;;   - illustrating inheritance (recurrence: 2, end-year: 2024)
+;;     - item: item A. Some longer explanation that may run over
+;;       multiple lines (amount: 10)
+;;     - item: item B (amount: 20)
+;;     - item: item C (amount: 30)
+;;       - a modification to item C (amount: 25, recurrence: 3)
+;;   - item: item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
+;;     - modification by an operation (amount: +50)
+;;     - modification by an operation (amount: *1.5)
+;;   - item: item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
+;;     - modification by an operation (amount: -1e2)
+;; 
+;;   We can use org-listcruncher to convert this list into a table
+;; 
+;;   #+NAME: src-example1
+;;   #+BEGIN_SRC elisp :results value :var listname="lstTest" :exports both
+;;     (org-listcruncher-to-table listname)
+;;   #+END_SRC
+;; 
+;;   #+RESULTS: src-example1
+;;   | description                         | other | amount | recurrence | end-year |
+;;   |-------------------------------------+-------+--------+------------+----------|
+;;   | item X modified by replacing values |   299 |     20 |          1 |     2020 |
+;;   | item A                              |       |     10 |          2 |     2024 |
+;;   | item B                              |       |     20 |          2 |     2024 |
+;;   | item C                              |       |     25 |          3 |     2024 |
+;;   | item Y modified by operations       |       |  150.0 |          4 |     2026 |
+;;   | item Z entered in scientific format |       |  900.0 |          3 |     2025 |
+;; 
 ;;; Code:
 (require 'org)
 (require 'cl-lib)
@@ -41,17 +79,17 @@
 The function must accept two arguments: KEY and LIST. The KEY is
 the key selecting the (KEY VALUE) pairs from the given LIST. The
 function must return a single value based on consolidating the
-VALUEs from the given key-value pairs. Refer to the default
+VALUEs from the given key-value pairs.  Refer to the default
 function `org-listcruncher-consolidate-default'.")
 
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
 
-LINE is the list item to be parsed. Outputting of a line is
-triggered by having 'item:' at the start of the line. The
+LINE is the list item to be parsed.  Outputting of a line is
+triggered by having 'item:' at the start of the line.  The
 description is a string terminated by a colon or an opening
-parenthesis. The key value pairs are given after the description
-in a format of (key1: val1, key2: val2, ...). Further words between the
+parenthesis.  The key value pairs are given after the description
+in a format of (key1: val1, key2: val2, ...).  Further words between the
 description and the key/value definition are ignored."
   (let (outp descr varstr varlst)
     (if (string-match "^ *\\\(item:\\\)? *\\\([^(.]*\\\)[^(]*\\\((\\\(.*\\\))\\\)?" line)
@@ -204,7 +242,7 @@ argument set to \"key\" it will return 60."
 
 ;;;###autoload
 (defun org-listcruncher-get-field (listname row col)
-  "Return field defined by ROW,COL from the table derived from the list named LISTNAME.
+  "Return field defined by ROW,COL from the table derived from LISTNAME.
 
 The given list with LISTNAME is parsed by listcruncher to obtain a table.
 The field is defined by the two strings for ROW and COL, where the ROW string
