@@ -1,22 +1,52 @@
 (require 'ert)
 (require 'org-listcruncher)
+(require 'seq)
+
+(defvar test-order '(member
+		     parsitem-default1
+		     parsitem-default2
+		     sparse-to-table1
+		     sparse-to-table2
+		     consolidate-vals1
+		     integr-get-field1
+		     integr-list-to-table1))
+
 
 (defvar testfile "./test-org-listcruncher.org")
+(defvar testlist1 "*Test
 
+   #+NAME: lstTest
+   - item: item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
+     - modification of item X (amount: 20)
+     - another modification of item X (other: 500)
+       - modification of the modification (other: 299)
+   - illustrating inheritance (recurrence: 2, end-year: 2024)
+     - item: item A. Some longer explanation that may run over
+       multiple lines (amount: 10)
+     - item: item B (amount: 20)
+     - item: item C (amount: 30)
+       - a modification to item C (amount: 25, recurrence: 3)
+   - item: item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
+     - modification by an operation (amount: +50)
+     - modification by an operation (amount: *1.5)
+   - item: item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
+     - modification by an operation (amount: -1e2)
+
+")
 
 
 (ert-deftest parsitem-default1 ()
   (should (equal
 	   (org-listcruncher-parseitem-default
-	    "item: First item (kCHF: 15, recurrence: 1, end-year: 2020)")
-	   '(t "First item " (("kCHF" "15") ("recurrence" "1") ("end-year" "2020"))))))
+	    "item: First item (amount: 15, recurrence: 1, end-year: 2020)")
+	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
 
 (ert-deftest parsitem-default2 ()
   (let ((res (org-listcruncher-parseitem-default
-	      "First item (kCHF: 15, recurrence: 1, end-year: 2020)")))
+	      "First item (amount: 15, recurrence: 1, end-year: 2020)")))
     (should (equal
 	     (nth 2 res)
-	     '(("kCHF" "15") ("recurrence" "1") ("end-year" "2020"))))
+	     '(("amount" "15") ("recurrence" "1") ("end-year" "2020"))))
     (should (eq (car res) nil))))
 
 (ert-deftest sparse-to-table1 ()
@@ -27,7 +57,7 @@
 		    (1 2 "")
 		    (-1 "" 3)))))
 
-(ert-deftest sparse-to-table1 ()
+(ert-deftest sparse-to-table2 ()
   (should (equal  (org-listcruncher--sparse-to-table '((("a" 1) ("b" 2))
 						       (("c" 3) ("a" -1)))
 						     '("b" "c"))
@@ -39,40 +69,35 @@
   (should
    (equal
     100.0
-    (org-listcruncher-consolidate-default "kCHF" '(("description" "First item ")
-						   ("kCHF" "/2")
-						   ("kCHF" "+100")
-						   ("kCHF" "1e2")
-						   ("kCHF" "+20")
-						   ("kCHF" "123")
-						   ("recurrence" "1")
-						   ("end-year" "2020"))))))
+    (org-listcruncher-consolidate-default "amount" '(("description" "First item ")
+						     ("amount" "/2")
+						     ("amount" "+100")
+						     ("amount" "1e2")
+						     ("amount" "+20")
+						     ("amount" "123")
+						     ("recurrence" "1")
+						     ("end-year" "2020"))))))
 
 
-(ert-deftest integr-list-to-table ()
+(ert-deftest integr-get-field1 ()
   (should (equal
 	   (with-temp-buffer
-	     (insert
-	      "* Test list
-   #+NAME: lsttest
-   - item: First item (kCHF: 15, recurrence: 1, end-year: 2020)
-     - modification of the first item (kCHF: 20)
-     - another modification of the first item (other: 500)
-       - modification of the modification (other: 299)
-   - item: second item (kCHF: 50, recurrence: 4, end-year: 2026)
-   - category (recurrence: 2, end-year: 2024)
-     - item: a category item A (kCHF: 10)
-     - item: a category item B (kCHF: 20)
-     - item: a category item C (kCHF: 30)
-       - a modification to category item C (kCHF: 25, recurrence: 3)
-")
+	     (insert testlist1)
 	     (org-mode)
-	     (org-listcruncher-to-table "lsttest")
-	     )
-	   '(("description" "other" "kCHF" "recurrence" "end-year")
+	     (org-listcruncher-get-field "lstTest" "item B" "amount"))
+	   "20")))
+
+(ert-deftest integr-list-to-table1 ()
+  (should (equal
+	   (with-temp-buffer
+	     (insert testlist1)
+	     (org-mode)
+	     (org-listcruncher-to-table "lstTest"))
+	   '(("description" "other" "amount" "recurrence" "end-year")
 	     hline
-	     ("First item " "299" "20" "1" "2020")
-	     ("second item " "" "50" "4" "2026")
-	     ("a category item A " "" "10" "2" "2024")
-	     ("a category item B " "" "20" "2" "2024")
-	     ("a category item C " "" "25" "3" "2024")))))
+	     ("item X modified by replacing values" "299" "20" "1" "2020")
+	     ("item A" "" "10" "2" "2024")
+	     ("item B" "" "20" "2" "2024")
+	     ("item C" "" "25" "3" "2024")
+	     ("item Y modified by operations" "" 150.0 "4" "2026")
+	     ("item Z entered in scientific format" "" 900.0 "3" "2025")))))

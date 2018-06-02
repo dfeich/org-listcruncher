@@ -4,7 +4,7 @@
 ;; Keywords: convenience
 ;; Package-Requires: ((cl-lib "0.5") (helm "1.9.2") (emacs "24.4"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
-;; Version: 0.1
+;; Version: 0.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -47,15 +47,17 @@ function `org-listcruncher-consolidate-default'.")
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
 
-LINE is the list item to be parsed.  Outputting of a line is
-triggered by having 'item:' at the start of the line.  The
-description is a string.  The key value pairs are given after the
-description in a format of (key1: val1, key2: val2, ...)."
+LINE is the list item to be parsed. Outputting of a line is
+triggered by having 'item:' at the start of the line. The
+description is a string terminated by a colon or an opening
+parenthesis. The key value pairs are given after the description
+in a format of (key1: val1, key2: val2, ...). Further words between the
+description and the key/value definition are ignored."
   (let (outp descr varstr varlst)
-    (if (string-match "^ *\\\(item:\\\)? *\\\([^(]*\\\) *\\\((\\\(.*\\\))\\\)?" line)
+    (if (string-match "^ *\\\(item:\\\)? *\\\([^(.]*\\\)[^(]*\\\((\\\(.*\\\))\\\)?" line)
 	(progn
 	  (setq outp (if (match-string 1 line) t nil)
-		descr (match-string 2 line)
+		descr (replace-regexp-in-string " *$" "" (match-string 2 line))
 		varstr (match-string 4 line))))
     (when varstr
       (setq varlst
@@ -200,6 +202,18 @@ argument set to \"key\" it will return 60."
     (or result "")))
 
 
+;;;###autoload
+(defun org-listcruncher-get-field (listname row col)
+  "Return field defined by ROW,COL from the table derived from the list named LISTNAME.
+
+The given list with LISTNAME is parsed by listcruncher to obtain a table.
+The field is defined by the two strings for ROW and COL, where the ROW string
+corresponds to the contents of the item's \"description\" column and the COL
+string corresponds to the column's name."
+  (let* ((tbl (org-listcruncher-to-table listname))
+	 (colnames (car tbl))
+	 (colidx (cl-position col colnames :test #'equal)))
+    (nth colidx (assoc row tbl))))
 
 (provide 'org-listcruncher)
 ;;; org-listcruncher.el ends here

@@ -1,21 +1,26 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org24e9d94)
-    1.  [Example usage](#orgefd5358)
+1.  [Org listcruncher](#org5382e12)
+    1.  [Installation](#orgf9da8f9)
+    2.  [Example usage](#org7ba79f2)
 
 
-<a id="org24e9d94"></a>
+<a id="org5382e12"></a>
 
 # Org listcruncher
 
 [![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)
 
 org-listcruncher provides a way to convert org-mode lists into
-a table structure following specific semantics.
+a table structure following specific semantics. 
 
-This is currently still in the initial development. As soon as I have completed the
-main features, I will submit ist as a MELPA package.
+
+<a id="orgf9da8f9"></a>
+
+## Installation
+
+I will submit ist as a MELPA package.
 
 If you want to test it already, just clone this repository, make sure that it is
 in your emacs search path and load the package using
@@ -23,7 +28,7 @@ in your emacs search path and load the package using
     (require 'org-listcruncher)
 
 
-<a id="orgefd5358"></a>
+<a id="org7ba79f2"></a>
 
 ## Example usage
 
@@ -35,7 +40,8 @@ Here is an example
     -   another modification of item X (other: 500)
         -   modification of the modification (other: 299)
 -   illustrating inheritance (recurrence: 2, end-year: 2024)
-    -   item: item A (amount: 10)
+    -   item: item A. Some longer explanation that may run over
+        multiple lines (amount: 10)
     -   item: item B (amount: 20)
     -   item: item C (amount: 30)
         -   a modification to item C (amount: 25, recurrence: 3)
@@ -47,7 +53,7 @@ Here is an example
 
 We can use org-listcruncher to convert this list into a table   
 
-    (org-listcruncher-to-table lname)
+    (org-listcruncher-to-table listname)
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -147,7 +153,7 @@ The rules for writing such a planning list are
 We can also provide an additional argument to affect the order of
 columns in which the table is produced.
 
-    (org-listcruncher-to-table lname '("description" "amount" "recurrence"))
+    (org-listcruncher-to-table listname '("description" "amount" "recurrence"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -228,4 +234,12 @@ columns in which the table is produced.
 </tr>
 </tbody>
 </table>
+
+It is also possible to directly obtain single table field values based on defining the
+row and column through the string corresponding to an item's description and its
+column name:
+
+    (org-listcruncher-get-field listname "item B" "amount")
+
+    20
 

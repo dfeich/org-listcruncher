@@ -9,17 +9,18 @@
   #+END_EXPORT
 
   org-listcruncher provides a way to convert org-mode lists into
-  a table structure following specific semantics.
+  a table structure following specific semantics. 
 
-  This is currently still in the initial development. As soon as I have completed the
-  main features, I will submit ist as a MELPA package.
+** Installation
 
-  If you want to test it already, just clone this repository, make sure that it is
-  in your emacs search path and load the package using
+   I will submit ist as a MELPA package.
 
-  #+BEGIN_SRC elisp
-  (require 'org-listcruncher)
-  #+END_SRC
+   If you want to test it already, just clone this repository, make sure that it is
+   in your emacs search path and load the package using
+
+   #+BEGIN_SRC elisp
+     (require 'org-listcruncher)
+   #+END_SRC
 
 ** Example usage
 
@@ -32,7 +33,8 @@
      - another modification of item X (other: 500)
        - modification of the modification (other: 299)
    - illustrating inheritance (recurrence: 2, end-year: 2024)
-     - item: item A (amount: 10)
+     - item: item A. Some longer explanation that may run over
+       multiple lines (amount: 10)
      - item: item B (amount: 20)
      - item: item C (amount: 30)
        - a modification to item C (amount: 25, recurrence: 3)
@@ -45,8 +47,8 @@
    We can use org-listcruncher to convert this list into a table   
 
    #+NAME: src-example1
-   #+BEGIN_SRC elisp :results value :var lname="lstTest" :exports both
-     (org-listcruncher-to-table lname)
+   #+BEGIN_SRC elisp :results value :var listname="lstTest" :exports both
+     (org-listcruncher-to-table listname)
    #+END_SRC
 
    #+RESULTS: src-example1
@@ -77,8 +79,8 @@
 
    We can also provide an additional argument to affect the order of
    columns in which the table is produced.
-   #+BEGIN_SRC elisp :results value :var lname="lstTest" :exports both
-     (org-listcruncher-to-table lname '("description" "amount" "recurrence"))
+   #+BEGIN_SRC elisp :results value :var listname="lstTest" :exports both
+     (org-listcruncher-to-table listname '("description" "amount" "recurrence"))
    #+END_SRC
 
    #+RESULTS:
@@ -92,15 +94,26 @@
    | item Z entered in scientific format |  900.0 |          3 |       |     2025 |
 
 
-  
+
+   It is also possible to directly obtain single table field values based on defining the
+   row and column through the string corresponding to an item's description and its
+   column name:
+   
+   #+BEGIN_SRC elisp :results value :var listname="lstTest" :exports both
+     (org-listcruncher-get-field listname "item B" "amount")
+   #+END_SRC
+
+   #+RESULTS:
+   : 20
+   
 ** Tests                                                           :noexport:
 
    A look at the main heavy lifting function and its return values:
-   #+BEGIN_SRC elisp :results output :var lname="lstTest"
+   #+BEGIN_SRC elisp :results output :var listname="lstTest"
      (pp (org-listcruncher--parselist (save-excursion
 				       (goto-char (point-min))
-				       (unless (search-forward-regexp (concat  "^ *#\\\+NAME: .*" lname) nil t)
-					 (error "No list of this name found: %s" lname))
+				       (unless (search-forward-regexp (concat  "^ *#\\\+NAME: .*" listname) nil t)
+					 (error "No list of this name found: %s" listname))
 				       (forward-line 1)
 				       (org-list-to-lisp))
 				     nil
@@ -131,34 +144,34 @@
      ("amount" "15")
      ("recurrence" "1")
      ("end-year" "2020"))
-    ((("description" "item X modified by replacing values ")
+    ((("description" "item X modified by replacing values")
       ("other" "299")
       ("other" "500")
       ("amount" "20")
       ("amount" "15")
       ("recurrence" "1")
       ("end-year" "2020"))
-     (("description" "item A ")
+     (("description" "item A")
       ("amount" "10")
       ("recurrence" "2")
       ("end-year" "2024"))
-     (("description" "item B ")
+     (("description" "item B")
       ("amount" "20")
       ("recurrence" "2")
       ("end-year" "2024"))
-     (("description" "item C ")
+     (("description" "item C")
       ("amount" "25")
       ("recurrence" "3")
       ("amount" "30")
       ("recurrence" "2")
       ("end-year" "2024"))
-     (("description" "item Y modified by operations ")
+     (("description" "item Y modified by operations")
       ("amount" "*1.5")
       ("amount" "+50")
       ("amount" "50")
       ("recurrence" "4")
       ("end-year" "2026"))
-     (("description" "item Z entered in scientific format ")
+     (("description" "item Z entered in scientific format")
       ("amount" "-1e2")
       ("amount" "1e3")
       ("recurrence" "3")
@@ -182,12 +195,12 @@
   #+CAPTION: Example 1
   |description|other|amount|recurrence|end-year|
   |-----
-  |item X modified by replacing values |299|20|1|2020|
-  |item A ||10|2|2024|
-  |item B ||20|2|2024|
-  |item C ||25|3|2024|
-  |item Y modified by operations ||150.0|4|2026|
-  |item Z entered in scientific format ||900.0|3|2025|
+  |item X modified by replacing values|299|20|1|2020|
+  |item A||10|2|2024|
+  |item B||20|2|2024|
+  |item C||25|3|2024|
+  |item Y modified by operations||150.0|4|2026|
+  |item Z entered in scientific format||900.0|3|2025|
 
   :END:
 
