@@ -7,7 +7,7 @@ services:
 
 before_install:
   - docker pull silex/emacs:26.1-dev
-  - docker run  silex/emacs:26.1-dev /bin/bash
+  - docker run -it silex/emacs:26.1-dev /bin/bash
 
 script:
   - emacs --version
