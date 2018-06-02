@@ -1,6 +1,8 @@
 
 * Org listcruncher
 
+  [[https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master][file:https://travis-ci.org/dfeich/org-listcruncher.svg]
+  
   org-listcruncher provides a way to convert org-mode lists into
   a table structure following specific semantics.
 
