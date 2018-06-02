@@ -71,16 +71,18 @@
   :group 'org :version 25.3)
 
 (defcustom org-listcruncher-parse-fn #'org-listcruncher-parseitem-default
-  "Function used for parsing list items." :group 'org-listcruncher)
+  "Function used for parsing list items." :group 'org-listcruncher
+  :type '(function))
 
 (defcustom org-listcruncher-consolidate-fn #'org-listcruncher-consolidate-default
   "Function for consolidating a sequence of values for a certain key.
 
-The function must accept two arguments: KEY and LIST. The KEY is
-the key selecting the (KEY VALUE) pairs from the given LIST. The
+The function must accept two arguments: KEY and LIST.  The KEY is
+the key selecting the (KEY VALUE) pairs from the given LIST.  The
 function must return a single value based on consolidating the
 VALUEs from the given key-value pairs.  Refer to the default
-function `org-listcruncher-consolidate-default'.")
+function `org-listcruncher-consolidate-default'."
+  :group 'org-listcruncher :type '(function) )
 
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
