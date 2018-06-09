@@ -2,7 +2,7 @@
 
 ;; Author: Derek Feichtinger <dfeich@gmail.com>
 ;; Keywords: convenience
-;; Package-Requires: ((cl-lib "0.5") (helm "1.9.2") (emacs "24.4"))
+;; Package-Requires: ((cl-lib "0.5") (helm "1.9.2") (seq "2.3") (emacs "24.4"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
 ;; Version: 0.2
 
@@ -65,6 +65,7 @@
 ;;; Code:
 (require 'org)
 (require 'cl-lib)
+(require 'seq)
 
 (defgroup org-listcruncher nil
   "Parses Org mode lists according to a parsing function and yields an org table structure."
