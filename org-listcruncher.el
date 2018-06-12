@@ -1,8 +1,8 @@
-;;; org-listcruncher.el --- Parse Org mode list contents into table
+;;; org-listcruncher.el --- Parse Org mode list contents into table  -*- lexical-binding: t; -*-
 
 ;; Author: Derek Feichtinger <dfeich@gmail.com>
 ;; Keywords: convenience
-;; Package-Requires: ((cl-lib "0.5") (helm "1.9.2") (seq "2.3") (emacs "24.4"))
+;; Package-Requires: ((cl-lib "0.5") (seq "2.3") (emacs "24.4"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
 ;; Version: 0.2
 
@@ -69,10 +69,11 @@
 
 (defgroup org-listcruncher nil
   "Parses Org mode lists according to a parsing function and yields an org table structure."
-  :group 'org :version 25.3)
+  :group 'org)
 
 (defcustom org-listcruncher-parse-fn #'org-listcruncher-parseitem-default
-  "Function used for parsing list items." :group 'org-listcruncher
+  "Function used for parsing list items."
+  :group 'org-listcruncher
   :type '(function))
 
 (defcustom org-listcruncher-consolidate-fn #'org-listcruncher-consolidate-default
@@ -83,7 +84,8 @@ the key selecting the (KEY VALUE) pairs from the given LIST.  The
 function must return a single value based on consolidating the
 VALUEs from the given key-value pairs.  Refer to the default
 function `org-listcruncher-consolidate-default'."
-  :group 'org-listcruncher :type '(function) )
+  :group 'org-listcruncher
+  :type 'function )
 
 (defun org-listcruncher-parseitem-default (line)
   "Default list item parsing function for org-listcruncher.
@@ -105,8 +107,7 @@ description and the key/value definition are ignored."
 	    (cl-loop for elem in (split-string varstr ", *")
 		     collect (split-string elem " *: *") into result
 		     finally return result)))
-    (list outp descr varlst))
-  )
+    (list outp descr varlst)))
 
 (defun org-listcruncher--sparse-to-table (sparselst &optional order)
   "Return list of all unique keys of the list of alists in SPARSELST.
@@ -156,8 +157,7 @@ original order."
 	   (org-list-to-lisp))))
     (org-listcruncher--sparse-to-table
      (cadr (org-listcruncher--parselist lst nil nil))
-     order))
-  )
+     order)))
 
 (defun org-listcruncher--parselist (lst inheritvars resultlst)
   "Parse an org list into a table structure.
@@ -195,17 +195,12 @@ contained association list corresponds to a later table row."
 			  (when outp
 			    ;; the current item's description always is placed first in the list
 			    (setq outvarlst (append `(("description" ,descr)) subtreevarlst itemvarlst inheritvars))
-			    (setq resultlst (append resultlst (list outvarlst)))
-			    ;; (princ (format "line: %s\n   varlst: %s\n"
-			    ;; 		   descr
-			    ;; 		   outvarlst))
-			    )
+			    (setq resultlst (append resultlst (list outvarlst))))
 			  ;; accumulate all item's varlists for returning to parent item
 			  (setq joinedsubvarlst (append subtreevarlst itemvarlst joinedsubvarlst))))
 		   ;; we return the consolidated varlst of this tree
 		   finally return joinedsubvarlst))
-    (list retvarlst resultlst)
-    ))
+    (list retvarlst resultlst)))
 
 (defun org-listcruncher-consolidate-default (key lst)
   "Return consolidated value for KEY out of the list LST of key-value pairs.
