@@ -5,7 +5,8 @@
   # file:https://travis....?branch=master fails to be recognized and
   # converted to a markdown image link. So I insert this directly.
   #+BEGIN_EXPORT md
-  [![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)
+  [![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher)
+  [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
   #+END_EXPORT
 
   org-listcruncher provides a way to convert org-mode lists into
@@ -13,11 +14,15 @@
 
 ** Installation
 
-   I will submit ist as a MELPA package.
+   You can get the package from [[https://melpa.org/#/org-listcruncher][MELPA]] using emacs' package manager.
 
-   If you want to test it already, just clone this repository, make sure that it is
-   in your emacs search path and load the package using
+   If you are using John Wiegley's =use-package= (which I recommend), just put the following line
+   into your =~/emacs.d/init.el= (or =~/.emacs=)
+   #+BEGIN_SRC elisp
+     (use-package org-listcruncher)
+   #+END_SRC
 
+   Or more barebones, just =require= it.
    #+BEGIN_SRC elisp
      (require 'org-listcruncher)
    #+END_SRC
@@ -106,6 +111,42 @@
    #+RESULTS:
    : 20
    
+** Configuration
+   The way that the table structure is created from the list can be customized by
+   providing own implementations of the parsing function and of the function consolidating
+   the parsed key/value pairs into a table.
+
+   The current implementations are examples that are sufficient for the above use case.
+
+   But one can easily imagine much more sophisticated parsing
+   functions which e.g. could be applied to a cooking recipe written
+   with minimal concessions as to syntax. From such a recipe one could
+   then derive a table of ingredients, their amounts, and cooking
+   times; all ready for being displayed as a table, to calculate the
+   adapted amounts according to the number of expected guests, and
+   entering the items onto your shopping list.
+
+   I am planning to provide more sophisticated parsing and
+   consolidation functions to choose from. Also, selection of the
+   functions will not only be possible by adapting the configuration,
+   but also in the function calls.
+
+   - =org-listcruncher-parse-fn= :: The function receives a list item
+        as its single argument. It must return a list (OUTP, DESCR,
+        VARLST), where OUTP is a boolean indicating whether this list
+        item will become a table row, DESCR is its description string
+        appearing in the table, VARLST is the list of key/value pairs
+        corresponding to the column name / values. Refer to the default function
+        `org-listcruncher-parseitem-default'
+
+   - org-listcruncher-consolidate-fn :: The function must accept two
+        arguments: KEY and LIST. The KEY is the key selecting the (KEY
+        VALUE) pairs from the given LIST. The function must return a
+        single value based on consolidating the VALUEs from the given
+        key-value pairs. Refer to the default function
+        =org-listcruncher-consolidate-default=.
+
+
 ** Tests                                                           :noexport:
 
    A look at the main heavy lifting function and its return values:

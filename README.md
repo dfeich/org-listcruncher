@@ -1,34 +1,40 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org5382e12)
-    1.  [Installation](#orgf9da8f9)
-    2.  [Example usage](#org7ba79f2)
+1.  [Org listcruncher](#org64b3d68)
+    1.  [Installation](#orgc567f8e)
+    2.  [Example usage](#org24388d4)
+    3.  [Configuration](#org0c5d6a9)
 
 
-<a id="org5382e12"></a>
+<a id="org64b3d68"></a>
 
 # Org listcruncher
 
-[![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)
+[![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher)
+[![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
 
 org-listcruncher provides a way to convert org-mode lists into
 a table structure following specific semantics. 
 
 
-<a id="orgf9da8f9"></a>
+<a id="orgc567f8e"></a>
 
 ## Installation
 
-I will submit ist as a MELPA package.
+You can get the package from [MELPA](https://melpa.org/#/org-listcruncher) using emacs' package manager.
 
-If you want to test it already, just clone this repository, make sure that it is
-in your emacs search path and load the package using
+If you are using John Wiegley's `use-package` (which I recommend), just put the following line
+into your `~/emacs.d/init.el` (or `~/.emacs`)
+
+    (use-package org-listcruncher)
+
+Or more barebones, just `require` it.
 
     (require 'org-listcruncher)
 
 
-<a id="org7ba79f2"></a>
+<a id="org24388d4"></a>
 
 ## Example usage
 
@@ -242,4 +248,43 @@ column name:
     (org-listcruncher-get-field listname "item B" "amount")
 
     20
+
+
+<a id="org0c5d6a9"></a>
+
+## Configuration
+
+The way that the table structure is created from the list can be customized by
+providing own implementations of the parsing function and of the function consolidating
+the parsed key/value pairs into a table.
+
+The current implementations are examples that are sufficient for the above use case.
+
+But one can easily imagine much more sophisticated parsing
+functions which e.g. could be applied to a cooking recipe written
+with minimal concessions as to syntax. From such a recipe one could
+then derive a table of ingredients, their amounts, and cooking
+times; all ready for being displayed as a table, to calculate the
+adapted amounts according to the number of expected guests, and
+entering the items onto your shopping list.
+
+I am planning to provide more sophisticated parsing and
+consolidation functions to choose from. Also, selection of the
+functions will not only be possible by adapting the configuration,
+but also in the function calls.
+
+-   **`org-listcruncher-parse-fn`:** The function receives a list item
+    as its single argument. It must return a list (OUTP, DESCR,
+    VARLST), where OUTP is a boolean indicating whether this list
+    item will become a table row, DESCR is its description string
+    appearing in the table, VARLST is the list of key/value pairs
+    corresponding to the column name / values. Refer to the default function
+    \`org-listcruncher-parseitem-default'
+
+-   **org-listcruncher-consolidate-fn:** The function must accept two
+    arguments: KEY and LIST. The KEY is the key selecting the (KEY
+    VALUE) pairs from the given LIST. The function must return a
+    single value based on consolidating the VALUEs from the given
+    key-value pairs. Refer to the default function
+    `org-listcruncher-consolidate-default`.
 
