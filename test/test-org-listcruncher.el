@@ -5,6 +5,7 @@
 (defvar test-order '(member
 		     parsitem-default1
 		     parsitem-default2
+		     parsitem-default3
 		     sparse-to-table1
 		     sparse-to-table2
 		     consolidate-vals1
@@ -42,6 +43,12 @@
 	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
 
 (ert-deftest parsitem-default2 ()
+  (should (equal
+	   (org-listcruncher-parseitem-default
+	    "*item:* First item (amount: 15, recurrence: 1, end-year: 2020)")
+	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
+
+(ert-deftest parsitem-default3 ()
   (let ((res (org-listcruncher-parseitem-default
 	      "First item (amount: 15, recurrence: 1, end-year: 2020)")))
     (should (equal

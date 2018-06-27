@@ -33,20 +33,20 @@
    Here is an example
 
    #+NAME: lstTest
-   - item: item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
+   - *item:* item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
      - modification of item X (amount: 20)
      - another modification of item X (other: 500)
        - modification of the modification (other: 299)
    - illustrating inheritance (recurrence: 2, end-year: 2024)
-     - item: item A. Some longer explanation that may run over
+     - *item:* item A. Some longer explanation that may run over
        multiple lines (amount: 10)
-     - item: item B (amount: 20)
-     - item: item C (amount: 30)
+     - *item:* item B (amount: 20)
+     - *item:* item C (amount: 30)
        - a modification to item C (amount: 25, recurrence: 3)
-   - item: item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
+   - *item:* item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
      - modification by an operation (amount: +50)
      - modification by an operation (amount: *1.5)
-   - item: item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
+   - *item:* item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
      - modification by an operation (amount: -1e2)
 
    We can use org-listcruncher to convert this list into a table   
@@ -65,6 +65,7 @@
    | item C                              |       |     25 |          3 |     2024 |
    | item Y modified by operations       |       |  150.0 |          4 |     2026 |
    | item Z entered in scientific format |       |  900.0 |          3 |     2025 |
+
 
    
    The rules for writing such a planning list are

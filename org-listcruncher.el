@@ -105,7 +105,8 @@ parenthesis.  The key value pairs are given after the description
 in a format of (key1: val1, key2: val2, ...).  Further words between the
 description and the key/value definition are ignored."
   (let (outp descr varstr varlst)
-    (if (string-match "^ *\\\(item:\\\)? *\\\([^(.]*\\\)[^(]*\\\((\\\(.*\\\))\\\)?" line)
+    ;; TODO: I should make the expression for the key:val list more restrictive
+    (if (string-match "^ *\\\(\\*?item:\\*?\\\)? *\\\([^(.]*\\\)[^(]*\\\((\\\(.*\\\))\\\)?" line)
 	(progn
 	  (setq outp (if (match-string 1 line) t nil)
 		descr (replace-regexp-in-string " *$" "" (match-string 2 line))
