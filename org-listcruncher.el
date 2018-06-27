@@ -95,31 +95,43 @@ function `org-listcruncher-consolidate-default'."
   :group 'org-listcruncher
   :type 'function )
 
-(defun org-listcruncher-parseitem-default (line)
-  "Default list item parsing function for org-listcruncher.
+(defun org-listcruncher-mk-parseitem-default (tag)
+  "List item default parsing function generator for org-listcruncher.
 
-LINE is the list item to be parsed.  Outputting of a line is
-triggered by having 'item:' at the start of the line.  The
-description is a string terminated by a colon or an opening
-parenthesis.  The key value pairs are given after the description
-in a format of (key1: val1, key2: val2, ...).  Further words between the
-description and the key/value definition are ignored."
-  (let (outp descr varstr varlst)
-    ;; TODO: I should make the expression for the key:val list more restrictive
-    (if (string-match
-	 "^ *\\(\\*?item:\\*?\\)? *\\([^(.]*\\)[^(]*\\\((\\\(\\\(\\\([^:,)]+\\\):\\\([^,)]+\\\),?\\\)+\\\))\\\)?"
-	 line)
-	(progn
-	  (setq outp (if (match-string 1 line) t nil)
-		descr (replace-regexp-in-string " *$" "" (match-string 2 line))
-		varstr (match-string 4 line))))
-    (when varstr
-      (setq varlst
-	    (cl-loop for elem in (split-string varstr ", *")
-		     if (string-match-p "[^:]+:[^:]+" elem)
-		     collect (split-string elem " *: *") into result
-		     finally return result)))
-    (list outp descr varlst)))
+Returns a parsing function taking a list item line as an
+argument.  Outputting of a line is triggered by having the TAG at
+the start of the line.  The description is a string terminated by
+a colon or an opening parenthesis.  The key value pairs are given
+after the description in a format of (key1: val1, key2: val2,
+...).  Further words between the description and the key/value
+definition are ignored."
+  (lambda (line)
+    (let (outp descr varstr varlst)
+      ;; TODO: I should make the expression for the key:val list more restrictive
+      (if (string-match
+	   (concat
+	    "^ *\\(" tag
+	    "\\)? *\\([^(.]*\\)[^(]*\\\((\\\(\\\(\\\([^:,)]+\\\):\\\([^,)]+\\\),?\\\)+\\\))\\\)?")
+	   line)
+	  (progn
+	    (setq outp (if (match-string 1 line) t nil)
+		  descr (replace-regexp-in-string " *$" "" (match-string 2 line))
+		  varstr (match-string 4 line))))
+      (when varstr
+	(setq varlst
+	      (cl-loop for elem in (split-string varstr ", *")
+		       if (string-match-p "[^:]+:[^:]+" elem)
+		       collect (split-string elem " *: *") into result
+		       finally return result)))
+      (list outp descr varlst)))
+  )
+
+
+(defun org-listcruncher-parseitem-default (line)
+  "List item default parsing function for org-listcruncher.
+
+Parses the given list item LINE."
+  (funcall (org-listcruncher-mk-parseitem-default "\\*?item:\\*?") line))
 
 (defun org-listcruncher--sparse-to-table (sparselst &optional order)
   "Return list of all unique keys of the list of alists in SPARSELST.
