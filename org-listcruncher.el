@@ -161,7 +161,9 @@ original order."
 				   ) into reslst
 		   finally return reslst
 		   )))
-    (append `(,orderedlst) '(hline) rows)))
+    (if rows
+	(append `(,orderedlst) '(hline) rows)
+      nil)))
 
 
 ;;;###autoload
