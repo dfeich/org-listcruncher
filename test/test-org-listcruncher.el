@@ -6,6 +6,7 @@
 		     parsitem-default1
 		     parsitem-default2
 		     parsitem-default3
+		     parsitem-default4
 		     sparse-to-table1
 		     sparse-to-table2
 		     consolidate-vals1
@@ -55,6 +56,13 @@
 	     (nth 2 res)
 	     '(("amount" "15") ("recurrence" "1") ("end-year" "2020"))))
     (should (eq (car res) nil))))
+
+;; test for more restrictive parsing of the key/val pairs syntax
+(ert-deftest parsitem-default4 ()
+  (should (equal
+	   (org-listcruncher-parseitem-default
+	    "*item:* First item (amount 15, recurrence 1, end-year 2020)")
+	   '(t "First item" nil))))
 
 (ert-deftest sparse-to-table1 ()
   (should (equal  (org-listcruncher--sparse-to-table '((("a" 1) ("b" 2))

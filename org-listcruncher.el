@@ -106,7 +106,9 @@ in a format of (key1: val1, key2: val2, ...).  Further words between the
 description and the key/value definition are ignored."
   (let (outp descr varstr varlst)
     ;; TODO: I should make the expression for the key:val list more restrictive
-    (if (string-match "^ *\\\(\\*?item:\\*?\\\)? *\\\([^(.]*\\\)[^(]*\\\((\\\(.*\\\))\\\)?" line)
+    (if (string-match
+	 "^ *\\(\\*?item:\\*?\\)? *\\([^(.]*\\)[^(]*\\\((\\\(\\\(\\\([^:,)]+\\\):\\\([^,)]+\\\),?\\\)+\\\))\\\)?"
+	 line)
 	(progn
 	  (setq outp (if (match-string 1 line) t nil)
 		descr (replace-regexp-in-string " *$" "" (match-string 2 line))
@@ -114,6 +116,7 @@ description and the key/value definition are ignored."
     (when varstr
       (setq varlst
 	    (cl-loop for elem in (split-string varstr ", *")
+		     if (string-match-p "[^:]+:[^:]+" elem)
 		     collect (split-string elem " *: *") into result
 		     finally return result)))
     (list outp descr varlst)))
