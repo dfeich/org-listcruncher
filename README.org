@@ -138,7 +138,7 @@
      (org-listcruncher-mk-parseitem-default :tag"\\*?row:\\*?" :bra "[" :ket "]")
    #+END_SRC
 
-   Let's test it:
+   Let's test it using this modified list:
       
    #+NAME: lstTest2
    - *row:* item X modified by replacing values [amount: 15, recurrence: 1, end-year: 2020].
@@ -157,6 +157,8 @@
    - *row:* item Z entered in scientific format [amount: 1e3, recurrence: 3, end-year: 2025]
      - modification by an operation [amount: -1e2]
 
+   We invoke org-listcruncher with the above parsing function:
+       
    #+NAME: src-example2
    #+BEGIN_SRC elisp :results value :var listname="lstTest2" :exports both
      (org-listcruncher-to-table listname

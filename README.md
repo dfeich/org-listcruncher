@@ -1,17 +1,17 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org79396d5)
-    1.  [Installation](#org9035ca6)
-    2.  [Example usage](#org219610c)
-    3.  [List writing rules](#orge72d3d7)
-    4.  [Using alternate parsing functions](#orgca8c1cf)
-    5.  [Configuration](#orgbaabf84)
-    6.  [Changes](#org57549c1)
-        1.  [version 1.0: API change](#org493bc96)
+1.  [Org listcruncher](#orgd4a7f34)
+    1.  [Installation](#org8b7f51c)
+    2.  [Example usage](#org97d9cb4)
+    3.  [List writing rules](#orgd831516)
+    4.  [Using alternate parsing functions](#orga656067)
+    5.  [Configuration](#org0fc54c7)
+    6.  [Changes](#org16ed759)
+        1.  [version 1.0: API change](#org43ea6ac)
 
 
-<a id="org79396d5"></a>
+<a id="orgd4a7f34"></a>
 
 # Org listcruncher
 
@@ -22,7 +22,7 @@ org-listcruncher provides a way to convert org-mode lists into
 a table structure following specific semantics. 
 
 
-<a id="org9035ca6"></a>
+<a id="org8b7f51c"></a>
 
 ## Installation
 
@@ -38,7 +38,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="org219610c"></a>
+<a id="org97d9cb4"></a>
 
 ## Example usage
 
@@ -239,7 +239,7 @@ column name:
     20
 
 
-<a id="orge72d3d7"></a>
+<a id="orgd831516"></a>
 
 ## List writing rules
 
@@ -259,7 +259,7 @@ The rules for writing such a planning list are
     the operation is carried out on the previous value of the respective key.
 
 
-<a id="orgca8c1cf"></a>
+<a id="orga656067"></a>
 
 ## Using alternate parsing functions
 
@@ -285,7 +285,7 @@ can obtain such a function by executing
 
     (org-listcruncher-mk-parseitem-default :tag"\\*?row:\\*?" :bra "[" :ket "]")
 
-Let's test it:
+Let's test it using this modified list:
 
 -   **row:** item X modified by replacing values [amount: 15, recurrence: 1, end-year: 2020].
     -   modification of item X [amount: 20]
@@ -302,6 +302,8 @@ Let's test it:
     -   modification by an operation [amount: \*1.5]
 -   **row:** item Z entered in scientific format [amount: 1e3, recurrence: 3, end-year: 2025]
     -   modification by an operation [amount: -1e2]
+
+We invoke org-listcruncher with the above parsing function:
 
     (org-listcruncher-to-table listname
     			   :parsefn (org-listcruncher-mk-parseitem-default
@@ -391,7 +393,7 @@ Let's test it:
 </table>
 
 
-<a id="orgbaabf84"></a>
+<a id="org0fc54c7"></a>
 
 ## Configuration
 
@@ -438,12 +440,12 @@ the following customization variables.
     documentation.
 
 
-<a id="org57549c1"></a>
+<a id="org16ed759"></a>
 
 ## Changes
 
 
-<a id="org493bc96"></a>
+<a id="org43ea6ac"></a>
 
 ### version 1.0: API change
 
