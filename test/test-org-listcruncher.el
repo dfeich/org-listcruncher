@@ -3,10 +3,12 @@
 (require 'seq)
 
 (defvar test-order '(member
-		     parsitem-default1
-		     parsitem-default2
-		     parsitem-default3
-		     parsitem-default4
+		     parseitem-default1
+		     parseitem-default2
+		     parseitem-default3
+		     parseitem-default4
+		     mk-parseitem-default1
+		     mk-parseitem-default2
 		     sparse-to-table1
 		     sparse-to-table2
 		     consolidate-vals1
@@ -24,7 +26,8 @@
        - modification of the modification (other: 299)
    - illustrating inheritance (recurrence: 2, end-year: 2024)
      - item: item A. Some longer explanation that may run over
-       multiple lines (amount: 10)
+       multiple lines. Let's add another line for
+       good measure (amount: 10)
      - item: item B (amount: 20)
      - item: item C (amount: 30)
        - a modification to item C (amount: 25, recurrence: 3)
@@ -37,19 +40,19 @@
 ")
 
 
-(ert-deftest parsitem-default1 ()
+(ert-deftest parseitem-default1 ()
   (should (equal
 	   (org-listcruncher-parseitem-default
 	    "item: First item (amount: 15, recurrence: 1, end-year: 2020)")
 	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
 
-(ert-deftest parsitem-default2 ()
+(ert-deftest parseitem-default2 ()
   (should (equal
 	   (org-listcruncher-parseitem-default
 	    "*item:* First item (amount: 15, recurrence: 1, end-year: 2020)")
 	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
 
-(ert-deftest parsitem-default3 ()
+(ert-deftest parseitem-default3 ()
   (let ((res (org-listcruncher-parseitem-default
 	      "First item (amount: 15, recurrence: 1, end-year: 2020)")))
     (should (equal
@@ -58,11 +61,25 @@
     (should (eq (car res) nil))))
 
 ;; test for more restrictive parsing of the key/val pairs syntax
-(ert-deftest parsitem-default4 ()
+(ert-deftest parseitem-default4 ()
   (should (equal
 	   (org-listcruncher-parseitem-default
 	    "*item:* First item (amount 15, recurrence 1, end-year 2020)")
 	   '(t "First item" nil))))
+
+(ert-deftest mk-parseitem-default1 ()
+  (should (equal
+	   (funcall (org-listcruncher-mk-parseitem-default :tag "row:")
+		    "row: First item (amount: 15, recurrence: 1, end-year: 2020)")
+	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
+
+(ert-deftest mk-parseitem-default2 ()
+  (should (equal
+	   (funcall (org-listcruncher-mk-parseitem-default :tag "row:"
+							   :bra "<<"
+							   :ket ">>")
+		    "row: First item <<amount: 15, recurrence: 1, end-year: 2020>>")
+	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
 
 (ert-deftest sparse-to-table1 ()
   (should (equal  (org-listcruncher--sparse-to-table '((("a" 1) ("b" 2))
