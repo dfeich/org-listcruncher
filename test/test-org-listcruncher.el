@@ -9,6 +9,7 @@
 		     parseitem-default4
 		     mk-parseitem-default1
 		     mk-parseitem-default2
+		     mk-parseitem-default3
 		     sparse-to-table1
 		     sparse-to-table2
 		     consolidate-vals1
@@ -80,6 +81,16 @@
 							   :ket ">>")
 		    "row: First item <<amount: 15, recurrence: 1, end-year: 2020>>")
 	   '(t "First item" (("amount" "15") ("recurrence" "1") ("end-year" "2020"))))))
+
+(ert-deftest mk-parseitem-default3 ()
+  (should (equal
+	   (funcall (org-listcruncher-mk-parseitem-default :tag "\\*"
+            						   :endtag "\\*"
+							   :bra "("
+							   :ket ")")
+		    "*one item is heavy* and colored (weight: 20, color: green)")
+	   '(t "one item is heavy" (("weight" "20") ("color" "green"))))))
+
 
 (ert-deftest sparse-to-table1 ()
   (should (equal  (org-listcruncher--sparse-to-table '((("a" 1) ("b" 2))

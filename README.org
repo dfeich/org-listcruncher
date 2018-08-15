@@ -129,10 +129,12 @@
 
    Simple example functions for this purpose can be generated using
    the =org-listcruncher-mk-parseitem-default= generator function. It
-   just allows modifying the tag that decides whether a list item will
-   become a table row. E.g. if I would like to match for "row:"
-   instead for "item:", and if I would like to use square brackets, I
-   can obtain such a function by executing
+   allows modifying the tag that decides whether a list item will
+   become a table row. It also permits changing the description's
+   terminating tag and the brackets for the key/value pairs. E.g. if I
+   would like to match for "row:" instead for "item:", and if I would
+   like to use square brackets, I can obtain such a function by
+   executing.
 
    #+BEGIN_SRC elisp :exports source
      (org-listcruncher-mk-parseitem-default :tag"\\*?row:\\*?" :bra "[" :ket "]")
@@ -178,7 +180,35 @@
    | item C                              |     25 |          3 |       |     2024 |
    | item Y modified by operations       |  150.0 |          4 |       |     2026 |
    | item Z entered in scientific format |  900.0 |          3 |       |     2025 |
-   
+
+
+   And another variant allowing to write the list with minimal markup for the tag:
+   Here any line beginning with a bold markup string becomes a row with the description
+   being taken as that string. I just define as tag/endtag the markup character "*".
+
+   #+NAME: lstBoldItems
+   - Defaults (color: white, form: cube, weight: 10)
+     - *one item is heavy* (weight: 20)
+     - *another is lighter* (weight: 5)
+       - it has other distinguishing features (color: green, form: disk)
+     - *item three* is the default
+
+   #+BEGIN_SRC elisp :results value :var listname="lstBoldItems" :exports both
+      (org-listcruncher-to-table listname
+                        	   :parsefn (org-listcruncher-mk-parseitem-default
+                        		     :tag "\\*"
+            				     :endtag "\\*"
+                        		     :bra "("
+                        		     :ket ")"))
+  #+END_SRC
+
+  #+RESULTS:
+  | description        | weight | color | form |
+  |--------------------+--------+-------+------|
+  | one item is heavy  |     20 | white | cube |
+  | another is lighter |      5 | green | disk |
+  | item three         |     10 | white | cube |
+
 ** Configuration
    The way that the table structure is created from the list can be
    customized by providing own implementations of the parsing function

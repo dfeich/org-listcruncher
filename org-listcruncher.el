@@ -4,7 +4,7 @@
 ;; Keywords: convenience
 ;; Package-Requires: ((cl-lib "0.5") (seq "2.3") (emacs "24.4"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
-;; Version: 1.0
+;; Version: 1.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -100,7 +100,9 @@ function `org-listcruncher-consolidate-default'."
   :type 'function )
 
 ;; TODO: make parentheses definitions a parameter
+;;;###autoload
 (cl-defun org-listcruncher-mk-parseitem-default (&key (tag "\\*?item:\\*?")
+						      (endtag ".")
 						      (bra "(")
 						      (ket ")"))
   "List item default parsing function generator for org-listcruncher.
@@ -114,8 +116,9 @@ The generated parsing functions all share the following features.
    TAG at the beginning of the list item. Default is \"item:\" and allowing
    for org bold markers.
 2. The row's description is defined by the string following the TAG up to
-   the full stop or the opening parenthesis used for beginning the key/value
-   pairs.
+   a) a character contained in the ENDTAG argument or
+   b) the opening parenthesis BRA used for beginning the key/value pairs.
+   The default for ENDTAG is \".\".
 3. The key/value pairs are separated by commas, and a key is separated from
    its value by a colon key1: val1, key2: val2. The default brackets are
    \"(\" and \")\".
@@ -123,6 +126,8 @@ The generated parsing functions all share the following features.
 The resulting function can be modified by the following keyword arguments:
 - :tag REGEXP defines the TAG used for identifying whether a line will become
   a table row.
+- :endtag STRING: Each character contained in that string will act as a terminator
+  for the description of an item.
 - The :bra and :ket keywords can be used to define strings defining the opening
   and closing parentheses to be used for enclosing the key/value pairs
   The given strings will get regexp quoted."
@@ -132,7 +137,7 @@ The resulting function can be modified by the following keyword arguments:
       (if (string-match
 	   (concat
 	    "^ *\\(" tag "\\)?" ;; tag
-	    " *\\([^" bra ".]*\\)" ;; description
+	    " *\\([^" endtag bra "]*\\)" ;; description terminated by endtag or bra
 	    "[^" bra "]*" ;; ignore everything until a bracket expression begins
 	    ;; key/val pairs
 	    "\\\(" (regexp-quote  bra) "\\\(\\\(\\\([^:,)]+\\\):\\\([^,)]+\\\),?\\\)+\\\)"
