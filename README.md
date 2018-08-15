@@ -1,17 +1,17 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#orgd4a7f34)
-    1.  [Installation](#org8b7f51c)
-    2.  [Example usage](#org97d9cb4)
-    3.  [List writing rules](#orgd831516)
-    4.  [Using alternate parsing functions](#orga656067)
-    5.  [Configuration](#org0fc54c7)
-    6.  [Changes](#org16ed759)
-        1.  [version 1.0: API change](#org43ea6ac)
+1.  [Org listcruncher](#orgfcbd5d5)
+    1.  [Installation](#orgdbc4fae)
+    2.  [Example usage](#org04cb916)
+    3.  [List writing rules](#orge07c7fb)
+    4.  [Using alternate parsing functions](#orgd1a415f)
+    5.  [Configuration](#org91a2909)
+    6.  [Changes](#org05141cd)
+        1.  [version 1.0: API change](#org1186afa)
 
 
-<a id="orgd4a7f34"></a>
+<a id="orgfcbd5d5"></a>
 
 # Org listcruncher
 
@@ -22,7 +22,7 @@ org-listcruncher provides a way to convert org-mode lists into
 a table structure following specific semantics. 
 
 
-<a id="org8b7f51c"></a>
+<a id="orgdbc4fae"></a>
 
 ## Installation
 
@@ -38,7 +38,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="org97d9cb4"></a>
+<a id="org04cb916"></a>
 
 ## Example usage
 
@@ -239,7 +239,7 @@ column name:
     20
 
 
-<a id="orgd831516"></a>
+<a id="orge07c7fb"></a>
 
 ## List writing rules
 
@@ -259,7 +259,7 @@ The rules for writing such a planning list are
     the operation is carried out on the previous value of the respective key.
 
 
-<a id="orga656067"></a>
+<a id="orgd1a415f"></a>
 
 ## Using alternate parsing functions
 
@@ -278,10 +278,12 @@ argument. It must return a list (`OUTP, DESCR, VARLST`), where
 
 Simple example functions for this purpose can be generated using
 the `org-listcruncher-mk-parseitem-default` generator function. It
-just allows modifying the tag that decides whether a list item will
-become a table row. E.g. if I would like to match for "row:"
-instead for "item:", and if I would like to use square brackets, I
-can obtain such a function by executing
+allows modifying the tag that decides whether a list item will
+become a table row. It also permits changing the description's
+terminating tag and the brackets for the key/value pairs. E.g. if I
+would like to match for "row:" instead for "item:", and if I would
+like to use square brackets, I can obtain such a function by
+executing.
 
     (org-listcruncher-mk-parseitem-default :tag"\\*?row:\\*?" :bra "[" :ket "]")
 
@@ -392,8 +394,72 @@ We invoke org-listcruncher with the above parsing function:
 </tbody>
 </table>
 
+And another variant allowing to write the list with minimal markup for the tag:
+Here any line beginning with a bold markup string becomes a row with the description
+being taken as that string. I just define as tag/endtag the markup character "\*".
 
-<a id="org0fc54c7"></a>
+-   Defaults (color: white, form: cube, weight: 10)
+    -   **one item is heavy** (weight: 20)
+    -   **another is lighter** (weight: 5)
+        -   it has other distinguishing features (color: green, form: disk)
+    -   **item three** is the default
+
+    (org-listcruncher-to-table listname
+    			     :parsefn (org-listcruncher-mk-parseitem-default
+    				       :tag "\\*"
+    				       :endtag "\\*"
+    				       :bra "("
+    				       :ket ")"))
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">description</th>
+<th scope="col" class="org-right">weight</th>
+<th scope="col" class="org-left">color</th>
+<th scope="col" class="org-left">form</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">one item is heavy</td>
+<td class="org-right">20</td>
+<td class="org-left">white</td>
+<td class="org-left">cube</td>
+</tr>
+
+
+<tr>
+<td class="org-left">another is lighter</td>
+<td class="org-right">5</td>
+<td class="org-left">green</td>
+<td class="org-left">disk</td>
+</tr>
+
+
+<tr>
+<td class="org-left">item three</td>
+<td class="org-right">10</td>
+<td class="org-left">white</td>
+<td class="org-left">cube</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org91a2909"></a>
 
 ## Configuration
 
@@ -440,12 +506,12 @@ the following customization variables.
     documentation.
 
 
-<a id="org16ed759"></a>
+<a id="org05141cd"></a>
 
 ## Changes
 
 
-<a id="org43ea6ac"></a>
+<a id="org1186afa"></a>
 
 ### version 1.0: API change
 
