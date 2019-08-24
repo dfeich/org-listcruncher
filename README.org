@@ -29,8 +29,10 @@
 
 ** Example usage
 
-   Write a planning list and give it a name using the appropriate Org syntax (e.g. =#+NAME: lstTest=).
-   Here is an example
+   Write a planning list and give it a name using the appropriate Org
+   syntax (e.g. =#+NAME: lstTest=). Here is an example (look at the
+   [[https://raw.githubusercontent.com/dfeich/org-listcruncher/master/README.org][raw form of this README.org]] to see the Org source buffer with all
+   the markup)
 
    #+NAME: lstTest
    - *item:* item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
