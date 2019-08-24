@@ -1,17 +1,19 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#orgfcbd5d5)
-    1.  [Installation](#orgdbc4fae)
-    2.  [Example usage](#org04cb916)
-    3.  [List writing rules](#orge07c7fb)
-    4.  [Using alternate parsing functions](#orgd1a415f)
-    5.  [Configuration](#org91a2909)
-    6.  [Changes](#org05141cd)
-        1.  [version 1.0: API change](#org1186afa)
+1.  [Org listcruncher](#org47a5319)
+    1.  [Installation](#org5028a8e)
+    2.  [Example usage](#org9216338)
+    3.  [List writing rules](#org0858eba)
+    4.  [Using alternate parsing functions](#org3ab7ff1)
+    5.  [Configuration](#org7c9d0c2)
+    6.  [Further examples](#org5c6ba88)
+        1.  [Adding a table formula to the resulting table](#org27e0b0b)
+    7.  [Changes](#org0be2634)
+        1.  [version 1.0: API change](#org68ac0db)
 
 
-<a id="orgfcbd5d5"></a>
+<a id="org47a5319"></a>
 
 # Org listcruncher
 
@@ -22,7 +24,7 @@ org-listcruncher provides a way to convert org-mode lists into
 a table structure following specific semantics. 
 
 
-<a id="orgdbc4fae"></a>
+<a id="org5028a8e"></a>
 
 ## Installation
 
@@ -38,7 +40,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="org04cb916"></a>
+<a id="org9216338"></a>
 
 ## Example usage
 
@@ -239,7 +241,7 @@ column name:
     20
 
 
-<a id="orge07c7fb"></a>
+<a id="org0858eba"></a>
 
 ## List writing rules
 
@@ -259,7 +261,7 @@ The rules for writing such a planning list are
     the operation is carried out on the previous value of the respective key.
 
 
-<a id="orgd1a415f"></a>
+<a id="org3ab7ff1"></a>
 
 ## Using alternate parsing functions
 
@@ -459,7 +461,7 @@ being taken as that string. I just define as tag/endtag the markup character "\*
 </table>
 
 
-<a id="org91a2909"></a>
+<a id="org7c9d0c2"></a>
 
 ## Configuration
 
@@ -494,7 +496,7 @@ the following customization variables.
 -   **org-listcruncher-consolidate-fn:** This variable defines the
     default consolidation function. The function must accept two
     arguments: KEY and LIST. KEY is the key (i.e. column value) of
-    this row that one is interested in. LIST contains all the
+    the row that one is interested in. LIST contains all the
     values for the KEY in that row, i.e. it will contain any
     redefinitions of the key value in subitems of this list
     item. The consolidation function basically defines how these
@@ -506,12 +508,140 @@ the following customization variables.
     documentation.
 
 
-<a id="org05141cd"></a>
+<a id="org5c6ba88"></a>
+
+## Further examples
+
+
+<a id="org27e0b0b"></a>
+
+### Adding a table formula to the resulting table
+
+The primary goal of `org-listcruncher-to-table` is to return a data structure
+(an org table structure) that can be used for further processing by code, e.g.
+in a babel block.
+
+Often, one will be mainly interested in a fast way to produce an
+org table that one immediately wants to process with the standard
+org table functions. Here is an easy recipe that adds a table row
+for the added up total and an according org table formula.
+
+    (princ (orgtbl-to-orgtbl
+       (append (org-listcruncher-to-table listname) '(hline ("Total")))
+       '(:tend "#+TBLFM: @>$3=vsum(@I..@II)")))
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">description</th>
+<th scope="col" class="org-right">other</th>
+<th scope="col" class="org-right">amount</th>
+<th scope="col" class="org-right">recurrence</th>
+<th scope="col" class="org-right">end-year</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">item X modified by replacing values</td>
+<td class="org-right">299</td>
+<td class="org-right">20</td>
+<td class="org-right">1</td>
+<td class="org-right">2020</td>
+</tr>
+
+
+<tr>
+<td class="org-left">item A</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">10</td>
+<td class="org-right">2</td>
+<td class="org-right">2024</td>
+</tr>
+
+
+<tr>
+<td class="org-left">item B</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">20</td>
+<td class="org-right">2</td>
+<td class="org-right">2024</td>
+</tr>
+
+
+<tr>
+<td class="org-left">item C</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">25</td>
+<td class="org-right">3</td>
+<td class="org-right">2024</td>
+</tr>
+
+
+<tr>
+<td class="org-left">item Y modified by operations</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">150.0</td>
+<td class="org-right">4</td>
+<td class="org-right">2026</td>
+</tr>
+
+
+<tr>
+<td class="org-left">item Z entered in scientific format</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">900.0</td>
+<td class="org-right">3</td>
+<td class="org-right">2025</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-left">Total</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">1125.</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+**Note:** Since this source block is not returning a table data structure, but an
+already rendered org table string, one needs to use `:results output`. Since we
+also do not want the result to be put into an org example block, we also need
+to add the `raw` flag. So, the whole org block looks like this.
+
+    #+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both :post lobPostAlignTables(*this*)
+      (princ (orgtbl-to-orgtbl
+            (append (org-listcruncher-to-table listname) '(hline ("Total")))
+            '(:tend "#+TBLFM: @>$3=vsum(@I..@II)")))
+    #+END_SRC
+
+In this block I also use a post function: `:post lobPostAlignTables`. This function will
+format the table and trigger the formula calculation, so that the user does not need to
+do it himself. This function and others can be obtained from [my library of babel example.](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org)
+
+
+<a id="org0be2634"></a>
 
 ## Changes
 
 
-<a id="org1186afa"></a>
+<a id="org68ac0db"></a>
 
 ### version 1.0: API change
 
