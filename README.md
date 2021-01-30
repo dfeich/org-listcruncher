@@ -1,20 +1,21 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org12e9104)
-    1.  [Installation](#org24565f3)
-    2.  [Example usage](#org9991042)
-    3.  [List writing rules](#orge20709c)
-    4.  [Using alternate parsing functions](#org9c000f8)
-    5.  [Configuration](#org76f9394)
-    6.  [Further examples](#org1af460d)
-        1.  [Adding a table formula to the resulting table](#org881b5f9)
-    7.  [Changes](#org77543d0)
-        1.  [version 1.0: API change](#org99493e4)
-        2.  [version 1.2: change for using operator values](#orgb58ea0d)
+1.  [Org listcruncher](#org53e0ab8)
+    1.  [Installation](#org359d139)
+    2.  [Example usage](#orgfb43497)
+    3.  [List writing rules](#orge7118eb)
+    4.  [Using alternate parsing functions](#org35ff825)
+    5.  [Configuration](#orgb1db2bf)
+    6.  [Further examples](#org0fac9d2)
+        1.  [Adding a table formula to the resulting table](#org7383240)
+    7.  [Changes](#org95c5fb7)
+        1.  [version 1.0: API change](#orgddd015a)
+        2.  [version 1.2: change for using operator values](#org79643b4)
+    8.  [Running tests](#org4693361)
 
 
-<a id="org12e9104"></a>
+<a id="org53e0ab8"></a>
 
 # Org listcruncher
 
@@ -29,7 +30,7 @@ list with comments, etc, but you can then always get a table structure out of it
 on which you can work with the table functions or even with further code blocks.
 
 
-<a id="org24565f3"></a>
+<a id="org359d139"></a>
 
 ## Installation
 
@@ -45,7 +46,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="org9991042"></a>
+<a id="orgfb43497"></a>
 
 ## Example usage
 
@@ -248,7 +249,7 @@ column name:
     20
 
 
-<a id="orge20709c"></a>
+<a id="orge7118eb"></a>
 
 ## List writing rules
 
@@ -271,7 +272,7 @@ The rules for writing such a planning list are
     old syntax is still allowed for all operators except "-")
 
 
-<a id="org9c000f8"></a>
+<a id="org35ff825"></a>
 
 ## Using alternate parsing functions
 
@@ -471,7 +472,7 @@ being taken as that string. I just define as tag/endtag the markup character "\*
 </table>
 
 
-<a id="org76f9394"></a>
+<a id="orgb1db2bf"></a>
 
 ## Configuration
 
@@ -518,12 +519,12 @@ the following customization variables.
     documentation.
 
 
-<a id="org1af460d"></a>
+<a id="org0fac9d2"></a>
 
 ## Further examples
 
 
-<a id="org881b5f9"></a>
+<a id="org7383240"></a>
 
 ### Adding a table formula to the resulting table
 
@@ -646,12 +647,12 @@ format the table and trigger the formula calculation, so that the user does not 
 do it himself. This function and others can be obtained from [my library of babel example.](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org)
 
 
-<a id="org77543d0"></a>
+<a id="org95c5fb7"></a>
 
 ## Changes
 
 
-<a id="org99493e4"></a>
+<a id="orgddd015a"></a>
 
 ### version 1.0: API change
 
@@ -662,7 +663,7 @@ keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
 
 
-<a id="orgb58ea0d"></a>
+<a id="org79643b4"></a>
 
 ### version 1.2: change for using operator values
 
@@ -670,4 +671,15 @@ The original syntax of e.g. "-10" did not allow differentiating
 between subtracting 10 or setting value to "-10". Therefore the
 operator use is now defined by "-`", "*`", etc. The old syntax
 is still allowed for all operators except "-".
+
+
+<a id="org4693361"></a>
+
+## Running tests
+
+If you have a local cask installation you can run `make test`. Else, you
+can invoke the test manually like this
+
+    emacs --batch -q -l org-listcruncher.el -l test/test-org-listcruncher.el \
+          --eval "(ert-run-tests-batch-and-exit test-order)"
 

@@ -32,11 +32,13 @@
      - item: item B (amount: 20)
      - item: item C (amount: 30)
        - a modification to item C (amount: 25, recurrence: 3)
+     - item: item D (amount: 20)
+       - replace by a negative value (amount: -10)
    - item: item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
-     - modification by an operation (amount: +50)
-     - modification by an operation (amount: *1.5)
+     - modification by an operation (amount: +=50)
+     - modification by an operation (amount: *=1.5)
    - item: item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
-     - modification by an operation (amount: -1e2)
+     - modification by an operation (amount: -=1e2)
 
 ")
 
@@ -142,5 +144,6 @@
 	     ("item A" "" "10" "2" "2024")
 	     ("item B" "" "20" "2" "2024")
 	     ("item C" "" "25" "3" "2024")
+	     ("item D" "" "-10" "2" "2024")
 	     ("item Y modified by operations" "" 150.0 "4" "2026")
 	     ("item Z entered in scientific format" "" 900.0 "3" "2025")))))

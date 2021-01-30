@@ -318,7 +318,16 @@
     between subtracting 10 or setting value to "-10". Therefore the
     operator use is now defined by "-=", "*=", etc. The old syntax
     is still allowed for all operators except "-".
-    
+** Running tests
+
+   If you have a local cask installation you can run =make test=. Else, you
+   can invoke the test manually like this
+   
+   #+begin_src bash
+     emacs --batch -q -l org-listcruncher.el -l test/test-org-listcruncher.el \
+           --eval "(ert-run-tests-batch-and-exit test-order)"
+   #+end_src
+
 ** Tests                                                           :noexport:
 
    A look at the main heavy lifting function and its return values:
