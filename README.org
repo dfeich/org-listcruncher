@@ -10,7 +10,11 @@
   #+END_EXPORT
 
   org-listcruncher provides a way to convert org-mode lists into
-  a table structure following specific semantics. 
+  a table structure following specific semantics.
+
+  It is meant as a planning tool, where you keep the history of planning in your
+  list with comments, etc, but you can then always get a table structure out of it
+  on which you can work with the table functions or even with further code blocks.
 
 ** Installation
 
@@ -46,10 +50,10 @@
      - *item:* item C (amount: 30)
        - a modification to item C (amount: 25, recurrence: 3)
    - *item:* item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
-     - modification by an operation (amount: +50)
-     - modification by an operation (amount: *1.5)
+     - modification by an operation (amount: +=50)
+     - modification by an operation (amount: *=1.5)
    - *item:* item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
-     - modification by an operation (amount: -1e2)
+     - modification by an operation (amount: -=1e2)
 
    We can use org-listcruncher to convert this list into a table   
 
@@ -111,8 +115,11 @@
       from the upper items.
    5. The key value of a higher order item can be overwritten by a new new value for the same key
       in a lower order line.
-   6. If a given value is of the form +10, -10, /10, *10, i.e. an operator followed by a number,
+   6. If a given value is of the form +=10, -=10, /=10, *=10, i.e. an operator followed by a number,
       the operation is carried out on the previous value of the respective key.
+      (Note: this changed in version 1.2, since the original use of "-10" did not
+      allow differentiating between subtracting 10 or setting value to "-10". The
+      old syntax is still allowed for all operators except "-")
 
 
 ** Using alternate parsing functions
@@ -158,7 +165,7 @@
      - modification by an operation [amount: +50]
      - modification by an operation [amount: *1.5]
    - *row:* item Z entered in scientific format [amount: 1e3, recurrence: 3, end-year: 2025]
-     - modification by an operation [amount: -1e2]
+     - modification by an operation [amount: -=1e2]
 
    We invoke org-listcruncher with the above parsing function:
        
@@ -249,7 +256,7 @@
         values get combined into the single value that we will assign
         to the column in this row. The default function either
         replaces the previous value or allows values with operators
-        (e.g. +10, *0.5) to modify the previous value. Refer to the
+        (e.g. +=10, *=0.5) to modify the previous value. Refer to the
         default function =org-listcruncher-consolidate-default=
         documentation.
 ** Further examples
@@ -306,7 +313,12 @@
     =org-listcruncher-get-field listname=, which now both accept
     keyword parameters. This will make the functions more future proof
     when further function arguments need to be introduced.
-   
+*** version 1.2: change for using operator values
+    The original syntax of e.g. "-10" did not allow differentiating
+    between subtracting 10 or setting value to "-10". Therefore the
+    operator use is now defined by "-=", "*=", etc. The old syntax
+    is still allowed for all operators except "-".
+    
 ** Tests                                                           :noexport:
 
    A look at the main heavy lifting function and its return values:

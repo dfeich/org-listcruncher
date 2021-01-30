@@ -4,7 +4,7 @@
 ;; Keywords: convenience
 ;; Package-Requires: ((cl-lib "0.5") (seq "2.3") (emacs "24.4"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
-;; Version: 1.1
+;; Version: 1.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -283,15 +283,15 @@ argument set to \"key\" it will return 60."
 	 (result (pop values)))
     (cl-loop for v in values
 	     with ops = nil
-    	     if (string-match "^\\\([+-/*]\\\)\\\([0-9.]+\\\(e[0-9+]\\\)?\\\)" v)
+    	     if (string-match "^\\\([+/*]=?\\\|-=\\\)\\\([0-9.]+\\\(e[0-9+]\\\)?\\\)" v)
     	     do (progn
 		  (when (eq (type-of result) 'string)
 		    (setq result (string-to-number result)))
 		  (setq result (apply (pcase (match-string 1 v)
-					("+" '+)
-					("-" '-)
-					("/" '/)
-					("*" '*))
+					((or "+=" "+") '+)
+					("-=" '-)
+					((or "/=" "/") '/)
+					((or "*=" "*") '*))
 				      (list result (string-to-number (match-string 2 v)))))
 		  ;; (princ (format "match: ops %s  number: %s result: %s\n"
 		  ;; 		 (match-string 1 v) (match-string 2 v) (number-to-string result)))

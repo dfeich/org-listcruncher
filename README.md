@@ -1,19 +1,20 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org47a5319)
-    1.  [Installation](#org5028a8e)
-    2.  [Example usage](#org9216338)
-    3.  [List writing rules](#org0858eba)
-    4.  [Using alternate parsing functions](#org3ab7ff1)
-    5.  [Configuration](#org7c9d0c2)
-    6.  [Further examples](#org5c6ba88)
-        1.  [Adding a table formula to the resulting table](#org27e0b0b)
-    7.  [Changes](#org0be2634)
-        1.  [version 1.0: API change](#org68ac0db)
+1.  [Org listcruncher](#org12e9104)
+    1.  [Installation](#org24565f3)
+    2.  [Example usage](#org9991042)
+    3.  [List writing rules](#orge20709c)
+    4.  [Using alternate parsing functions](#org9c000f8)
+    5.  [Configuration](#org76f9394)
+    6.  [Further examples](#org1af460d)
+        1.  [Adding a table formula to the resulting table](#org881b5f9)
+    7.  [Changes](#org77543d0)
+        1.  [version 1.0: API change](#org99493e4)
+        2.  [version 1.2: change for using operator values](#orgb58ea0d)
 
 
-<a id="org47a5319"></a>
+<a id="org12e9104"></a>
 
 # Org listcruncher
 
@@ -21,10 +22,14 @@
 [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
 
 org-listcruncher provides a way to convert org-mode lists into
-a table structure following specific semantics. 
+a table structure following specific semantics.
+
+It is meant as a planning tool, where you keep the history of planning in your
+list with comments, etc, but you can then always get a table structure out of it
+on which you can work with the table functions or even with further code blocks.
 
 
-<a id="org5028a8e"></a>
+<a id="org24565f3"></a>
 
 ## Installation
 
@@ -40,12 +45,14 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="org9216338"></a>
+<a id="org9991042"></a>
 
 ## Example usage
 
-Write a planning list and give it a name using the appropriate Org syntax (e.g. `#+NAME: lstTest`).
-Here is an example
+Write a planning list and give it a name using the appropriate Org
+syntax (e.g. `#+NAME: lstTest`). Here is an example (look at the
+[raw form of this README.org](https://raw.githubusercontent.com/dfeich/org-listcruncher/master/README.org) to see the Org source buffer with all
+the markup)
 
 -   **item:** item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
     -   modification of item X (amount: 20)
@@ -58,10 +65,10 @@ Here is an example
     -   **item:** item C (amount: 30)
         -   a modification to item C (amount: 25, recurrence: 3)
 -   **item:** item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
-    -   modification by an operation (amount: +50)
-    -   modification by an operation (amount: \*1.5)
+    -   modification by an operation (amount: +=50)
+    -   modification by an operation (amount: \*=1.5)
 -   **item:** item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
-    -   modification by an operation (amount: -1e2)
+    -   modification by an operation (amount: -=1e2)
 
 We can use org-listcruncher to convert this list into a table   
 
@@ -241,7 +248,7 @@ column name:
     20
 
 
-<a id="org0858eba"></a>
+<a id="orge20709c"></a>
 
 ## List writing rules
 
@@ -257,11 +264,14 @@ The rules for writing such a planning list are
     from the upper items.
 5.  The key value of a higher order item can be overwritten by a new new value for the same key
     in a lower order line.
-6.  If a given value is of the form +10, -10, /10, \*10, i.e. an operator followed by a number,
+6.  If a given value is of the form +=10, -=10, /=10, \*=10, i.e. an operator followed by a number,
     the operation is carried out on the previous value of the respective key.
+    (Note: this changed in version 1.2, since the original use of "-10" did not
+    allow differentiating between subtracting 10 or setting value to "-10". The
+    old syntax is still allowed for all operators except "-")
 
 
-<a id="org3ab7ff1"></a>
+<a id="org9c000f8"></a>
 
 ## Using alternate parsing functions
 
@@ -305,16 +315,16 @@ Let's test it using this modified list:
     -   modification by an operation [amount: +50]
     -   modification by an operation [amount: \*1.5]
 -   **row:** item Z entered in scientific format [amount: 1e3, recurrence: 3, end-year: 2025]
-    -   modification by an operation [amount: -1e2]
+    -   modification by an operation [amount: -=1e2]
 
 We invoke org-listcruncher with the above parsing function:
 
     (org-listcruncher-to-table listname
-    			   :parsefn (org-listcruncher-mk-parseitem-default
-    				     :tag "\\*?row:\\*?"
-    				     :bra "["
-    				     :ket "]")
-    			   :order '("description" "amount" "recurrence"))
+                               :parsefn (org-listcruncher-mk-parseitem-default
+                                         :tag "\\*?row:\\*?"
+                                         :bra "["
+                                         :ket "]")
+                               :order '("description" "amount" "recurrence"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -407,11 +417,11 @@ being taken as that string. I just define as tag/endtag the markup character "\*
     -   **item three** is the default
 
     (org-listcruncher-to-table listname
-    			     :parsefn (org-listcruncher-mk-parseitem-default
-    				       :tag "\\*"
-    				       :endtag "\\*"
-    				       :bra "("
-    				       :ket ")"))
+                                 :parsefn (org-listcruncher-mk-parseitem-default
+                                           :tag "\\*"
+                                           :endtag "\\*"
+                                           :bra "("
+                                           :ket ")"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -461,7 +471,7 @@ being taken as that string. I just define as tag/endtag the markup character "\*
 </table>
 
 
-<a id="org7c9d0c2"></a>
+<a id="org76f9394"></a>
 
 ## Configuration
 
@@ -503,17 +513,17 @@ the following customization variables.
     values get combined into the single value that we will assign
     to the column in this row. The default function either
     replaces the previous value or allows values with operators
-    (e.g. +10, \*0.5) to modify the previous value. Refer to the
+    (e.g. +=10, \*=0.5) to modify the previous value. Refer to the
     default function `org-listcruncher-consolidate-default`
     documentation.
 
 
-<a id="org5c6ba88"></a>
+<a id="org1af460d"></a>
 
 ## Further examples
 
 
-<a id="org27e0b0b"></a>
+<a id="org881b5f9"></a>
 
 ### Adding a table formula to the resulting table
 
@@ -636,12 +646,12 @@ format the table and trigger the formula calculation, so that the user does not 
 do it himself. This function and others can be obtained from [my library of babel example.](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org)
 
 
-<a id="org0be2634"></a>
+<a id="org77543d0"></a>
 
 ## Changes
 
 
-<a id="org68ac0db"></a>
+<a id="org99493e4"></a>
 
 ### version 1.0: API change
 
@@ -650,4 +660,14 @@ I apologize for a backwards incompatible API change for
 `org-listcruncher-get-field listname`, which now both accept
 keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
+
+
+<a id="orgb58ea0d"></a>
+
+### version 1.2: change for using operator values
+
+The original syntax of e.g. "-10" did not allow differentiating
+between subtracting 10 or setting value to "-10". Therefore the
+operator use is now defined by "-`", "*`", etc. The old syntax
+is still allowed for all operators except "-".
 

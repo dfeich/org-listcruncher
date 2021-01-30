@@ -12,7 +12,10 @@
     - item: a category item C (kCHF: 30)
       - a modification to category item C (kCHF: 25, recurrence: 3)
   
-* Example with adding
+* Example with adding to a former key value
+
+  This shows how the consolidation function works when encountering
+  a value with an operator
 
   #+NAME: lsttestAdd
   - item: First item (kCHF: 100, recurrence: 1, end-year: 2020)
@@ -83,3 +86,169 @@
       ("end-year" "2024"))))
    #+end_example
   
+* Issue #6
+** What the bug reporter tried to do  
+   #+begin_src elisp
+     (let ((data '((1 "Team1" (("member 1" "data1")
+                               ("member 2" "data2")
+                               ("member 3" "data3")))
+                   (2 "Team2" (("member 1" "data1")
+                               ("member 2" "data2")
+                               ("member 3" "data3"))))))
+       (org-listcruncher-to-table data)
+       )
+   #+end_src
+
+   and he gets and error:
+   : search-forward-regexp: Wrong type argument: characterp, (1 "Team1" (("member 1" "data1") ("member 2" "data2") ("member 3" "data3")))
+   
+** What he probably wanted to do
+   
+
+   #+NAME: issue6
+   - item: Team1 (member_1: data1, member_2: data2, member_3: data3)
+   - item: Team2 (member_1: data1, member_2: data2, member_3: data3)
+  
+   #+BEGIN_SRC elisp :results value :var listname="issue6" :exports both
+     (org-listcruncher-to-table listname)
+   #+END_SRC
+
+   #+RESULTS:
+   | description | member_1 | member_2 | member_3 |
+   |-------------+----------+----------+----------|
+   | Team1       | data1    | data2    | data3    |
+   | Team2       | data1    | data2    | data3    |
+
+** A look at the data structures  
+
+   I chose to find the list and execute =org-list-to-lisp= myself on it, because
+   if the list is just passed by reference (like in the following block) the first
+   level of list items is losing information
+   
+   #+BEGIN_SRC elisp :results value :var list=issue6 :exports both
+     (pp list)
+   #+END_SRC
+
+   #+RESULTS:
+   : (("item: Team1 (member_1: data1, member_2: data2, member_3: data3)")
+   :  ("item: Team2 (member_1: data1, member_2: data2, member_3: data3)"))
+
+   And now I locate the list myself
+   #+BEGIN_SRC elisp :results output :var listname="issue6" :exports both
+     (let ((lst
+            (save-excursion
+              (goto-char (point-min))
+              (unless (search-forward-regexp (concat  "^[ \t]*#\\\+NAME: .*" listname) nil t)
+                (error "No list of this name found: %s" listname))
+              (forward-line 1)
+              (org-list-to-lisp))))
+       (pp lst))
+   #+END_SRC   
+
+   #+RESULTS:
+   : (unordered
+   :  ("item: Team1 (member_1: data1, member_2: data2, member_3: data3)")
+   :  ("item: Team2 (member_1: data1, member_2: data2, member_3: data3)"))
+
+
+
+   #+NAME: issue6b
+   - item: Team1 (member_1: data1, member_2: data2, member_3: data3)
+     - I changed my mind (member_2: DATA2)
+   - item: Team2 (member_1: data1, member_2: data2, member_3: data3)
+     - I changed my mind again (member_3: DATA3)
+       
+   #+BEGIN_SRC elisp :results value :var listname="issue6b" :exports both
+     (org-listcruncher-to-table listname)
+   #+END_SRC
+
+   #+RESULTS:
+   | description | member_2 | member_1 | member_3 |
+   |-------------+----------+----------+----------|
+   | Team1       | DATA2    | data1    | data3    |
+   | Team2       | data2    | data1    | DATA3    |
+
+
+   #+BEGIN_SRC elisp :results value :var list=issue6b :exports both
+     (pp list)
+   #+END_SRC
+
+   #+RESULTS:
+   : (("item: Team1 (member_1: data1, member_2: data2, member_3: data3)"
+   :   (unordered
+   :    ("I changed my mind (member_2: DATA2)")))
+   :  ("item: Team2 (member_1: data1, member_2: data2, member_3: data3)"
+   :   (unordered
+   :    ("I changed my mind again (member_3: DATA3)"))))
+
+   #+BEGIN_SRC elisp :results output :var listname="issue6b" :exports both
+     (let ((lst
+            (save-excursion
+              (goto-char (point-min))
+              (unless (search-forward-regexp (concat  "^[ \t]*#\\\+NAME: .*" listname) nil t)
+                (error "No list of this name found: %s" listname))
+              (forward-line 1)
+              (org-list-to-lisp))))
+       (pp lst))
+   #+END_SRC   
+
+   #+RESULTS:
+   : (unordered
+   :  ("item: Team1 (member_1: data1, member_2: data2, member_3: data3)"
+   :   (unordered
+   :    ("I changed my mind (member_2: DATA2)")))
+   :  ("item: Team2 (member_1: data1, member_2: data2, member_3: data3)"
+   :   (unordered
+   :    ("I changed my mind again (member_3: DATA3)"))))
+   
+* Issue #8
+
+  Problem: When encountering a value change string like "-50" the
+  current default value consolidation function always interprets
+  that the user wants to subtract 50 from the former value. But there
+  must also be a way to set the value directly to "-50". Example:
+  
+  #+NAME: lst_issue8
+  - item: row1 (key1: -20)
+    - I wnat to change the key1 value to -50, so (key1: -50)
+
+   #+BEGIN_SRC elisp :results value :var listname="lst_issue8" :exports both
+     (org-listcruncher-to-table listname)
+   #+END_SRC
+
+   #+RESULTS:
+   | description | key1 |
+   |-------------+------|
+   | row1        |  -70 |
+
+
+  Now, org-listcruncher allows anyhow that expert users can supply their own
+  consolidation functions, but I think the default should be smarter. In order
+  to conserve as much backwards compatibility as possible, I will implement
+  the it will use "+=","-=" syntax, but still allow simple operators for everything
+  except the subtraction. "-50" will always be interpreted as setting the value
+  to -50.
+
+  #+NAME: lst_issue8b
+  - item: row1 (key1: -20)
+    - I wnat to change the key1 value to -50, so (key1: -50)
+  - item: row2 (key1: -20)
+    - I want to subtract -50, so (key1: -=50)
+  - item: row3 (key1: -20). more complex example
+    - (key1: +=30)  should be 10
+    - (key1: *2)    should be 20
+    - (key1: *=3)    should be 60
+    - (key1: /=12)    should be 5
+
+    
+    #+BEGIN_SRC elisp :results value :var listname="lst_issue8b" :exports both
+      (org-listcruncher-to-table listname)
+    #+END_SRC
+
+    #+RESULTS:
+    | description | key1 |
+    |-------------+------|
+    | row1        |  -50 |
+    | row2        |  -70 |
+    | row3        |    5 |
+
