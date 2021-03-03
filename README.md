@@ -1,21 +1,21 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org53e0ab8)
-    1.  [Installation](#org359d139)
-    2.  [Example usage](#orgfb43497)
-    3.  [List writing rules](#orge7118eb)
-    4.  [Using alternate parsing functions](#org35ff825)
-    5.  [Configuration](#orgb1db2bf)
-    6.  [Further examples](#org0fac9d2)
-        1.  [Adding a table formula to the resulting table](#org7383240)
-    7.  [Changes](#org95c5fb7)
-        1.  [version 1.0: API change](#orgddd015a)
-        2.  [version 1.2: change for using operator values](#org79643b4)
-    8.  [Running tests](#org4693361)
+1.  [Org listcruncher](#org4278aca)
+    1.  [Installation](#orgd489b75)
+    2.  [Example usage](#orgf303054)
+    3.  [List writing rules](#orgc5c382a)
+    4.  [Using alternate parsing functions](#org1d103e1)
+    5.  [Configuration](#org1609e67)
+    6.  [Further examples](#orga7a7ce6)
+        1.  [Adding a table formula to the resulting table](#org6ab7c1a)
+    7.  [Changes](#org9b12ff9)
+        1.  [version 1.0: API change](#org49be8a3)
+        2.  [version 1.2: change for using operator values](#org26fe019)
+    8.  [Running tests](#orgd8266aa)
 
 
-<a id="org53e0ab8"></a>
+<a id="org4278aca"></a>
 
 # Org listcruncher
 
@@ -30,7 +30,7 @@ list with comments, etc, but you can then always get a table structure out of it
 on which you can work with the table functions or even with further code blocks.
 
 
-<a id="org359d139"></a>
+<a id="orgd489b75"></a>
 
 ## Installation
 
@@ -46,7 +46,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="orgfb43497"></a>
+<a id="orgf303054"></a>
 
 ## Example usage
 
@@ -55,21 +55,25 @@ syntax (e.g. `#+NAME: lstTest`). Here is an example (look at the
 [raw form of this README.org](https://raw.githubusercontent.com/dfeich/org-listcruncher/master/README.org) to see the Org source buffer with all
 the markup)
 
--   **item:** item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
+-   **item:** item X modified by replacing values (amount: 15, responsible: Peter, end-year: 2020)
     -   modification of item X (amount: 20)
     -   another modification of item X (other: 500)
         -   modification of the modification (other: 299)
--   illustrating inheritance (recurrence: 2, end-year: 2024)
+-   illustrating inheritance (responsible: Mary, end-year: 2024)
     -   **item:** item A. Some longer explanation that may run over
         multiple lines (amount: 10)
     -   **item:** item B (amount: 20)
     -   **item:** item C (amount: 30)
-        -   a modification to item C (amount: 25, recurrence: 3)
--   **item:** item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
+        -   a modification to item C (amount: 25, responsible: Paul)
+-   **item:** item Y modified by operations (amount: 50, responsible: Peter, end-year: 2026)
     -   modification by an operation (amount: +=50)
     -   modification by an operation (amount: \*=1.5)
--   **item:** item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
+-   **item:** item Z entered in scientific format (amount: 1e3, responsible: Mary, end-year: 2025)
     -   modification by an operation (amount: -=1e2)
+-   **item:** illustrating += and -= with strings (amount: 1000, responsible: Peter, end-year: 2025)
+    -   adding a string (responsible: +=Paul, end-year: +=1)
+    -   adding a string (responsible: +=Mary, end-year: +=1)
+    -   removing a string (responsible: -=Peter)
 
 We can use org-listcruncher to convert this list into a table   
 
@@ -85,7 +89,7 @@ We can use org-listcruncher to convert this list into a table
 
 <col  class="org-right" />
 
-<col  class="org-right" />
+<col  class="org-left" />
 
 <col  class="org-right" />
 </colgroup>
@@ -94,7 +98,7 @@ We can use org-listcruncher to convert this list into a table
 <th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">other</th>
 <th scope="col" class="org-right">amount</th>
-<th scope="col" class="org-right">recurrence</th>
+<th scope="col" class="org-left">responsible</th>
 <th scope="col" class="org-right">end-year</th>
 </tr>
 </thead>
@@ -104,7 +108,7 @@ We can use org-listcruncher to convert this list into a table
 <td class="org-left">item X modified by replacing values</td>
 <td class="org-right">299</td>
 <td class="org-right">20</td>
-<td class="org-right">1</td>
+<td class="org-left">Peter</td>
 <td class="org-right">2020</td>
 </tr>
 
@@ -113,7 +117,7 @@ We can use org-listcruncher to convert this list into a table
 <td class="org-left">item A</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">10</td>
-<td class="org-right">2</td>
+<td class="org-left">Mary</td>
 <td class="org-right">2024</td>
 </tr>
 
@@ -122,7 +126,7 @@ We can use org-listcruncher to convert this list into a table
 <td class="org-left">item B</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">20</td>
-<td class="org-right">2</td>
+<td class="org-left">Mary</td>
 <td class="org-right">2024</td>
 </tr>
 
@@ -131,7 +135,7 @@ We can use org-listcruncher to convert this list into a table
 <td class="org-left">item C</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">25</td>
-<td class="org-right">3</td>
+<td class="org-left">Paul</td>
 <td class="org-right">2024</td>
 </tr>
 
@@ -140,7 +144,7 @@ We can use org-listcruncher to convert this list into a table
 <td class="org-left">item Y modified by operations</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">150.0</td>
-<td class="org-right">4</td>
+<td class="org-left">Peter</td>
 <td class="org-right">2026</td>
 </tr>
 
@@ -149,8 +153,17 @@ We can use org-listcruncher to convert this list into a table
 <td class="org-left">item Z entered in scientific format</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">900.0</td>
-<td class="org-right">3</td>
+<td class="org-left">Mary</td>
 <td class="org-right">2025</td>
+</tr>
+
+
+<tr>
+<td class="org-left">illustrating += and -= with strings</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">1000</td>
+<td class="org-left">Paul Mary</td>
+<td class="org-right">2027</td>
 </tr>
 </tbody>
 </table>
@@ -158,7 +171,7 @@ We can use org-listcruncher to convert this list into a table
 We can also provide an additional argument to affect the order of
 columns in which the table is produced.
 
-    (org-listcruncher-to-table listname :order '("description" "amount" "recurrence"))
+    (org-listcruncher-to-table listname :order '("description" "amount" "responsible"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -168,7 +181,7 @@ columns in which the table is produced.
 
 <col  class="org-right" />
 
-<col  class="org-right" />
+<col  class="org-left" />
 
 <col  class="org-right" />
 
@@ -178,7 +191,7 @@ columns in which the table is produced.
 <tr>
 <th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">amount</th>
-<th scope="col" class="org-right">recurrence</th>
+<th scope="col" class="org-left">responsible</th>
 <th scope="col" class="org-right">other</th>
 <th scope="col" class="org-right">end-year</th>
 </tr>
@@ -188,7 +201,7 @@ columns in which the table is produced.
 <tr>
 <td class="org-left">item X modified by replacing values</td>
 <td class="org-right">20</td>
-<td class="org-right">1</td>
+<td class="org-left">Peter</td>
 <td class="org-right">299</td>
 <td class="org-right">2020</td>
 </tr>
@@ -197,7 +210,7 @@ columns in which the table is produced.
 <tr>
 <td class="org-left">item A</td>
 <td class="org-right">10</td>
-<td class="org-right">2</td>
+<td class="org-left">Mary</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">2024</td>
 </tr>
@@ -206,7 +219,7 @@ columns in which the table is produced.
 <tr>
 <td class="org-left">item B</td>
 <td class="org-right">20</td>
-<td class="org-right">2</td>
+<td class="org-left">Mary</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">2024</td>
 </tr>
@@ -215,7 +228,7 @@ columns in which the table is produced.
 <tr>
 <td class="org-left">item C</td>
 <td class="org-right">25</td>
-<td class="org-right">3</td>
+<td class="org-left">Paul</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">2024</td>
 </tr>
@@ -224,7 +237,7 @@ columns in which the table is produced.
 <tr>
 <td class="org-left">item Y modified by operations</td>
 <td class="org-right">150.0</td>
-<td class="org-right">4</td>
+<td class="org-left">Peter</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">2026</td>
 </tr>
@@ -233,9 +246,18 @@ columns in which the table is produced.
 <tr>
 <td class="org-left">item Z entered in scientific format</td>
 <td class="org-right">900.0</td>
-<td class="org-right">3</td>
+<td class="org-left">Mary</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">2025</td>
+</tr>
+
+
+<tr>
+<td class="org-left">illustrating += and -= with strings</td>
+<td class="org-right">1000</td>
+<td class="org-left">Paul Mary</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">2027</td>
 </tr>
 </tbody>
 </table>
@@ -249,7 +271,7 @@ column name:
     20
 
 
-<a id="orge7118eb"></a>
+<a id="orgc5c382a"></a>
 
 ## List writing rules
 
@@ -270,9 +292,13 @@ The rules for writing such a planning list are
     (Note: this changed in version 1.2, since the original use of "-10" did not
     allow differentiating between subtracting 10 or setting value to "-10". The
     old syntax is still allowed for all operators except "-")
+7.  If a given value is of the form +=word then "word" is
+    added to the previous string value for this key, using space as a separator. If
+    -=word is used, then "word" is removed from the previous string
+    value. This allows building lists of words.
 
 
-<a id="org35ff825"></a>
+<a id="org1d103e1"></a>
 
 ## Using alternate parsing functions
 
@@ -472,7 +498,7 @@ being taken as that string. I just define as tag/endtag the markup character "\*
 </table>
 
 
-<a id="orgb1db2bf"></a>
+<a id="org1609e67"></a>
 
 ## Configuration
 
@@ -499,32 +525,31 @@ happy to receive any additions from contributors).
 The default functions that are used can be configured using
 the following customization variables.
 
--   **`org-listcruncher-parse-fn`:** This variable defines the
-    default parsing function to use if you call the
-    org-listcruncher functions without an explicit `:parsefn`
-    keyword agument.
+-   **`org-listcruncher-parse-fn`:** This variable defines the default
+    parsing function to use if you call the org-listcruncher
+    functions without an explicit `:parsefn` keyword agument.
 
 -   **org-listcruncher-consolidate-fn:** This variable defines the
-    default consolidation function. The function must accept two
+    default function for consolidating all the values that a certain
+    key got assigned for a list item. The function must accept two
     arguments: KEY and LIST. KEY is the key (i.e. column value) of
-    the row that one is interested in. LIST contains all the
-    values for the KEY in that row, i.e. it will contain any
-    redefinitions of the key value in subitems of this list
-    item. The consolidation function basically defines how these
-    values get combined into the single value that we will assign
-    to the column in this row. The default function either
-    replaces the previous value or allows values with operators
-    (e.g. +=10, \*=0.5) to modify the previous value. Refer to the
-    default function `org-listcruncher-consolidate-default`
-    documentation.
+    the row that one is interested in. LIST contains all the values
+    for the KEY in that row, i.e. it will contain any redefinitions
+    of the key value in subitems of this list item. The consolidation
+    function basically defines how these values get combined into the
+    single value that we will assign to the column in this row. The
+    default function either replaces the previous value or allows
+    values with operators (e.g. +=10, \*=0.5) to modify the previous
+    value. Refer to the default function
+    `org-listcruncher-consolidate-default` documentation.
 
 
-<a id="org0fac9d2"></a>
+<a id="orga7a7ce6"></a>
 
 ## Further examples
 
 
-<a id="org7383240"></a>
+<a id="org6ab7c1a"></a>
 
 ### Adding a table formula to the resulting table
 
@@ -551,7 +576,7 @@ for the added up total and an according org table formula.
 
 <col  class="org-right" />
 
-<col  class="org-right" />
+<col  class="org-left" />
 
 <col  class="org-right" />
 </colgroup>
@@ -560,7 +585,7 @@ for the added up total and an according org table formula.
 <th scope="col" class="org-left">description</th>
 <th scope="col" class="org-right">other</th>
 <th scope="col" class="org-right">amount</th>
-<th scope="col" class="org-right">recurrence</th>
+<th scope="col" class="org-left">responsible</th>
 <th scope="col" class="org-right">end-year</th>
 </tr>
 </thead>
@@ -570,7 +595,7 @@ for the added up total and an according org table formula.
 <td class="org-left">item X modified by replacing values</td>
 <td class="org-right">299</td>
 <td class="org-right">20</td>
-<td class="org-right">1</td>
+<td class="org-left">Peter</td>
 <td class="org-right">2020</td>
 </tr>
 
@@ -579,7 +604,7 @@ for the added up total and an according org table formula.
 <td class="org-left">item A</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">10</td>
-<td class="org-right">2</td>
+<td class="org-left">Mary</td>
 <td class="org-right">2024</td>
 </tr>
 
@@ -588,7 +613,7 @@ for the added up total and an according org table formula.
 <td class="org-left">item B</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">20</td>
-<td class="org-right">2</td>
+<td class="org-left">Mary</td>
 <td class="org-right">2024</td>
 </tr>
 
@@ -597,7 +622,7 @@ for the added up total and an according org table formula.
 <td class="org-left">item C</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">25</td>
-<td class="org-right">3</td>
+<td class="org-left">Paul</td>
 <td class="org-right">2024</td>
 </tr>
 
@@ -606,7 +631,7 @@ for the added up total and an according org table formula.
 <td class="org-left">item Y modified by operations</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">150.0</td>
-<td class="org-right">4</td>
+<td class="org-left">Peter</td>
 <td class="org-right">2026</td>
 </tr>
 
@@ -615,8 +640,17 @@ for the added up total and an according org table formula.
 <td class="org-left">item Z entered in scientific format</td>
 <td class="org-right">&#xa0;</td>
 <td class="org-right">900.0</td>
-<td class="org-right">3</td>
+<td class="org-left">Mary</td>
 <td class="org-right">2025</td>
+</tr>
+
+
+<tr>
+<td class="org-left">illustrating += and -= with strings</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">1000</td>
+<td class="org-left">Paul Mary</td>
+<td class="org-right">2027</td>
 </tr>
 </tbody>
 
@@ -624,8 +658,8 @@ for the added up total and an according org table formula.
 <tr>
 <td class="org-left">Total</td>
 <td class="org-right">&#xa0;</td>
-<td class="org-right">1125.</td>
-<td class="org-right">&#xa0;</td>
+<td class="org-right">2125.</td>
+<td class="org-left">&#xa0;</td>
 <td class="org-right">&#xa0;</td>
 </tr>
 </tbody>
@@ -647,12 +681,12 @@ format the table and trigger the formula calculation, so that the user does not 
 do it himself. This function and others can be obtained from [my library of babel example.](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org)
 
 
-<a id="org95c5fb7"></a>
+<a id="org9b12ff9"></a>
 
 ## Changes
 
 
-<a id="orgddd015a"></a>
+<a id="org49be8a3"></a>
 
 ### version 1.0: API change
 
@@ -663,7 +697,7 @@ keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
 
 
-<a id="org79643b4"></a>
+<a id="org26fe019"></a>
 
 ### version 1.2: change for using operator values
 
@@ -673,7 +707,7 @@ operator use is now defined by "-`", "*`", etc. The old syntax
 is still allowed for all operators except "-".
 
 
-<a id="org4693361"></a>
+<a id="orgd8266aa"></a>
 
 ## Running tests
 

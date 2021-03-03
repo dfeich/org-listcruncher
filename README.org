@@ -39,21 +39,25 @@
    the markup)
 
    #+NAME: lstTest
-   - *item:* item X modified by replacing values (amount: 15, recurrence: 1, end-year: 2020)
+   - *item:* item X modified by replacing values (amount: 15, responsible: Peter, end-year: 2020)
      - modification of item X (amount: 20)
      - another modification of item X (other: 500)
        - modification of the modification (other: 299)
-   - illustrating inheritance (recurrence: 2, end-year: 2024)
+   - illustrating inheritance (responsible: Mary, end-year: 2024)
      - *item:* item A. Some longer explanation that may run over
        multiple lines (amount: 10)
      - *item:* item B (amount: 20)
      - *item:* item C (amount: 30)
-       - a modification to item C (amount: 25, recurrence: 3)
-   - *item:* item Y modified by operations (amount: 50, recurrence: 4, end-year: 2026)
+       - a modification to item C (amount: 25, responsible: Paul)
+   - *item:* item Y modified by operations (amount: 50, responsible: Peter, end-year: 2026)
      - modification by an operation (amount: +=50)
      - modification by an operation (amount: *=1.5)
-   - *item:* item Z entered in scientific format (amount: 1e3, recurrence: 3, end-year: 2025)
+   - *item:* item Z entered in scientific format (amount: 1e3, responsible: Mary, end-year: 2025)
      - modification by an operation (amount: -=1e2)
+   - *item:* illustrating += and -= with strings (amount: 1000, responsible: Peter, end-year: 2025)
+     - adding a string (responsible: +=Paul, end-year: +=1)
+     - adding a string (responsible: +=Mary, end-year: +=1)
+     - removing a string (responsible: -=Peter)
 
    We can use org-listcruncher to convert this list into a table   
 
@@ -63,31 +67,33 @@
    #+END_SRC
 
    #+RESULTS: src-example1
-   | description                         | other | amount | recurrence | end-year |
-   |-------------------------------------+-------+--------+------------+----------|
-   | item X modified by replacing values |   299 |     20 |          1 |     2020 |
-   | item A                              |       |     10 |          2 |     2024 |
-   | item B                              |       |     20 |          2 |     2024 |
-   | item C                              |       |     25 |          3 |     2024 |
-   | item Y modified by operations       |       |  150.0 |          4 |     2026 |
-   | item Z entered in scientific format |       |  900.0 |          3 |     2025 |
+   | description                         | other | amount | responsible | end-year |
+   |-------------------------------------+-------+--------+-------------+----------|
+   | item X modified by replacing values |   299 |     20 | Peter       |     2020 |
+   | item A                              |       |     10 | Mary        |     2024 |
+   | item B                              |       |     20 | Mary        |     2024 |
+   | item C                              |       |     25 | Paul        |     2024 |
+   | item Y modified by operations       |       |  150.0 | Peter       |     2026 |
+   | item Z entered in scientific format |       |  900.0 | Mary        |     2025 |
+   | illustrating += and -= with strings |       |   1000 | Paul Mary   |     2027 |
 
 
    We can also provide an additional argument to affect the order of
    columns in which the table is produced.
    #+BEGIN_SRC elisp :results value :var listname="lstTest" :exports both
-     (org-listcruncher-to-table listname :order '("description" "amount" "recurrence"))
+     (org-listcruncher-to-table listname :order '("description" "amount" "responsible"))
    #+END_SRC
 
    #+RESULTS:
-   | description                         | amount | recurrence | other | end-year |
-   |-------------------------------------+--------+------------+-------+----------|
-   | item X modified by replacing values |     20 |          1 |   299 |     2020 |
-   | item A                              |     10 |          2 |       |     2024 |
-   | item B                              |     20 |          2 |       |     2024 |
-   | item C                              |     25 |          3 |       |     2024 |
-   | item Y modified by operations       |  150.0 |          4 |       |     2026 |
-   | item Z entered in scientific format |  900.0 |          3 |       |     2025 |
+   | description                         | amount | responsible | other | end-year |
+   |-------------------------------------+--------+-------------+-------+----------|
+   | item X modified by replacing values |     20 | Peter       |   299 |     2020 |
+   | item A                              |     10 | Mary        |       |     2024 |
+   | item B                              |     20 | Mary        |       |     2024 |
+   | item C                              |     25 | Paul        |       |     2024 |
+   | item Y modified by operations       |  150.0 | Peter       |       |     2026 |
+   | item Z entered in scientific format |  900.0 | Mary        |       |     2025 |
+   | illustrating += and -= with strings |   1000 | Paul Mary   |       |     2027 |
 
 
 
@@ -120,6 +126,10 @@
       (Note: this changed in version 1.2, since the original use of "-10" did not
       allow differentiating between subtracting 10 or setting value to "-10". The
       old syntax is still allowed for all operators except "-")
+   7. If a given value is of the form +=word then "word" is
+      added to the previous string value for this key, using space as a separator. If
+      -=word is used, then "word" is removed from the previous string
+      value. This allows building lists of words.
 
 
 ** Using alternate parsing functions
@@ -241,24 +251,23 @@
    The default functions that are used can be configured using
    the following customization variables.
 
-   - =org-listcruncher-parse-fn= :: This variable defines the
-	default parsing function to use if you call the
-	org-listcruncher functions without an explicit =:parsefn=
-	keyword agument.
+   - =org-listcruncher-parse-fn= :: This variable defines the default
+     parsing function to use if you call the org-listcruncher
+     functions without an explicit =:parsefn= keyword agument.
 
    - org-listcruncher-consolidate-fn :: This variable defines the
-        default consolidation function. The function must accept two
-        arguments: KEY and LIST. KEY is the key (i.e. column value) of
-        the row that one is interested in. LIST contains all the
-        values for the KEY in that row, i.e. it will contain any
-        redefinitions of the key value in subitems of this list
-        item. The consolidation function basically defines how these
-        values get combined into the single value that we will assign
-        to the column in this row. The default function either
-        replaces the previous value or allows values with operators
-        (e.g. +=10, *=0.5) to modify the previous value. Refer to the
-        default function =org-listcruncher-consolidate-default=
-        documentation.
+     default function for consolidating all the values that a certain
+     key got assigned for a list item. The function must accept two
+     arguments: KEY and LIST. KEY is the key (i.e. column value) of
+     the row that one is interested in. LIST contains all the values
+     for the KEY in that row, i.e. it will contain any redefinitions
+     of the key value in subitems of this list item. The consolidation
+     function basically defines how these values get combined into the
+     single value that we will assign to the column in this row. The
+     default function either replaces the previous value or allows
+     values with operators (e.g. +=10, *=0.5) to modify the previous
+     value. Refer to the default function
+     =org-listcruncher-consolidate-default= documentation.
 ** Further examples
 *** Adding a table formula to the resulting table
     The primary goal of =org-listcruncher-to-table= is to return a data structure

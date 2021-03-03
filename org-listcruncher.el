@@ -291,12 +291,20 @@ argument set to \"key\" it will return 60."
 					("-=" '-)
 					((or "/=" "/") '/)
 					((or "*=" "*") '*))
-				      (list result (string-to-number (match-string 2 v)))))
-		  ;; (princ (format "match: ops %s  number: %s result: %s\n"
-		  ;; 		 (match-string 1 v) (match-string 2 v) (number-to-string result)))
-		  )
-	     else do (setq result v)
-	     )
+				      (list result
+                                            (string-to-number (match-string 2 v))))))
+	     else if (string-match "^\\(+\\|-\\)=\\(.*\\)" v)
+             do (progn (when (or (integerp result) (floatp result))
+                         (setq result (number-to-string result)))
+                       (pcase (match-string 1 v)
+                         ("+" (setq result (concat result " " (match-string 2 v))))
+                         ("-" (setq result
+                                    (mapconcat
+                                     'identity
+                                     (remove (match-string 2 v) (split-string result " "))
+                                     " ")))))
+             else
+             do (setq result v))
     (or result "")))
 
 

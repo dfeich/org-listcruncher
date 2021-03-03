@@ -252,3 +252,26 @@
     | row2        |  -70 |
     | row3        |    5 |
 
+* provide string concatenating feature
+
+
+  #+NAME: lst_StringAdd
+  - item: row1 (key1: AAAA)
+    - I want to change the key1 value to BBBB, so (key1: BBBB)
+  - item: row2 (key1: AAAA)
+    - I want to add a string, so (key1: +=BBBB)
+  - item: row3 (key1: AAAA)
+    - I want to add a string, so (key1: +=BBBB)
+    - I want to add a string, so (key1: +=CCCC)
+    - I want to remove a string, so (key1: -=BBBB)
+
+    #+BEGIN_SRC elisp :results value :var listname="lst_StringAdd" :exports both
+      (org-listcruncher-to-table listname)
+    #+END_SRC
+
+    #+RESULTS:
+    | description | key1      |
+    |-------------+-----------|
+    | row1        | BBBB      |
+    | row2        | AAAA BBBB |
+    | row3        | AAAA CCCC |

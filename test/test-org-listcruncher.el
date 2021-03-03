@@ -13,6 +13,8 @@
 		     sparse-to-table1
 		     sparse-to-table2
 		     consolidate-vals1
+		     consolidate-vals2
+		     consolidate-vals3
 		     integr-get-field1
 		     integr-list-to-table1))
 
@@ -110,11 +112,13 @@
 		    hline (2 "" 1)
 		    ("" 3 -1)))))
 
+;; backward compatible syntax for +,/,*
 (ert-deftest consolidate-vals1 ()
   (should
    (equal
-    100.0
+    300.0
     (org-listcruncher-consolidate-default "amount" '(("description" "First item ")
+						     ("amount" "*3")
 						     ("amount" "/2")
 						     ("amount" "+100")
 						     ("amount" "1e2")
@@ -122,6 +126,32 @@
 						     ("amount" "123")
 						     ("recurrence" "1")
 						     ("end-year" "2020"))))))
+;; new syntax += -= ...
+(ert-deftest consolidate-vals2 ()
+  (should
+   (equal
+    300.0
+    (org-listcruncher-consolidate-default "amount" '(("description" "First item ")
+						     ("amount" "*3")
+						     ("amount" "/2")
+						     ("amount" "+100")
+						     ("amount" "1e2")
+						     ("amount" "+20")
+						     ("amount" "123")
+						     ("recurrence" "1")
+						     ("end-year" "2020"))))))
+
+;; string-list concatenation and removal
+(ert-deftest consolidate-vals3 ()
+  (should
+   (equal
+    "AAAA CCCC"
+    (org-listcruncher-consolidate-default "key" '(("description" "Some item")
+                                                  ("key" "-=BBBB")
+                                                  ("key" "+=CCCC")
+                                                  ("key" "+=BBBB")
+                                                  ("key" "AAAA")
+                                                  ("otherkey" "xyz"))))))
 
 
 (ert-deftest integr-get-field1 ()
