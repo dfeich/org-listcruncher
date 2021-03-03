@@ -2,7 +2,7 @@
 
 ;; Author: Derek Feichtinger <dfeich@gmail.com>
 ;; Keywords: convenience
-;; Package-Requires: ((cl-lib "0.5") (seq "2.3") (emacs "24.4"))
+;; Package-Requires: ((seq "2.3") (emacs "26.1"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
 ;; Version: 1.2
 
@@ -271,7 +271,7 @@ table row."
 The list is given in reverse order (stack), i.e. the newest item
 is at the beginning.
 
-Example list:\n '((\"key\" \"+10\") (\"key\" \"50\") (\"otherkey\"
+Example list:\n '((\"key\" \"+=10\") (\"key\" \"50\") (\"otherkey\"
 \"hello\"))
 
 When calling the function on this list with the KEY
@@ -282,7 +282,6 @@ argument set to \"key\" it will return 60."
 			  finally return (nreverse reslst)))
 	 (result (pop values)))
     (cl-loop for v in values
-	     with ops = nil
     	     if (string-match "^\\\([+/*]=?\\\|-=\\\)\\\([0-9.]+\\\(e[0-9+]\\\)?\\\)" v)
     	     do (progn
 		  (when (eq (type-of result) 'string)
