@@ -124,11 +124,11 @@ The generated parsing functions all share the following features.
    \"(\" and \")\".
 
 The resulting function can be modified by the following keyword arguments:
-- :tag REGEXP defines the TAG used for identifying whether a line will become
+- TAG REGEXP defines the REGEXP used for identifying whether a line will become
   a table row.
-- :endtag STRING: Each character contained in that string will act as a terminator
-  for the description of an item.
-- The :bra and :ket keywords can be used to define strings defining the opening
+- ENDTAG STRING: Each character contained in that string will act as a
+  terminator for the description of an item.
+- The BRA and KET keywords can be used to define strings defining the opening
   and closing parentheses to be used for enclosing the key/value pairs
   The given strings will get regexp quoted."
   (lambda (line)
@@ -153,8 +153,7 @@ The resulting function can be modified by the following keyword arguments:
 		       if (string-match-p "[^:]+:[^:]+" elem)
 		       collect (split-string elem " *: *") into result
 		       finally return result)))
-      (list outp descr varlst)))
-  )
+      (list outp descr varlst))))
 
 
 (defun org-listcruncher-parseitem-default (line)
@@ -185,12 +184,10 @@ original order."
 	  (cl-loop for alst in sparselst
 		   with reslst = nil
 		   collect (mapcar (lambda (key)
-				     (apply org-listcruncher-consolidate-fn (list key alst))
-				     )
-				   orderedlst
-				   ) into reslst
-		   finally return reslst
-		   )))
+				     (apply org-listcruncher-consolidate-fn
+                                            (list key alst)))
+				   orderedlst) into reslst
+		   finally return reslst)))
     (if rows
 	(append `(,orderedlst) '(hline) rows)
       nil)))
@@ -202,9 +199,9 @@ original order."
 				     (order nil))
   "Return a table structure based on parsing the Org list with name LISTNAME.
 
-Optional keyword arguments: The user may use the :parsefn
+Optional keyword arguments: The user may use the PARSEFN
 FUNCTION argument to define another parsing function for the list
-items.  The :order keyword takes a list containing column names as
+items.  The ORDER keyword takes a list containing column names as
 its argument for defining the output table's desired columns
 order. The list may contain only a subset of the items.  The
 remaining columns will be added in the original order."
