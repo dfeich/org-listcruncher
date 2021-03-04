@@ -1,36 +1,49 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org4278aca)
-    1.  [Installation](#orgd489b75)
-    2.  [Example usage](#orgf303054)
-    3.  [List writing rules](#orgc5c382a)
-    4.  [Using alternate parsing functions](#org1d103e1)
-    5.  [Configuration](#org1609e67)
-    6.  [Further examples](#orga7a7ce6)
-        1.  [Adding a table formula to the resulting table](#org6ab7c1a)
-    7.  [Changes](#org9b12ff9)
-        1.  [version 1.0: API change](#org49be8a3)
-        2.  [version 1.2: change for using operator values](#org26fe019)
-    8.  [Running tests](#orgd8266aa)
+1.  [Org listcruncher](#org1c7a274)
+    1.  [Installation](#org0b7cd0e)
+    2.  [Example usage](#org5bd6b01)
+    3.  [List writing rules](#orgf52e97b)
+    4.  [Using alternate parsing functions](#orge2c34b4)
+    5.  [Configuration](#orgdab564d)
+    6.  [Further examples](#orgfa5abf0)
+        1.  [Adding a table formula to the resulting table](#org41f93e3)
+    7.  [Changes](#org408dc59)
+        1.  [version 1.0: API change](#org9f7fa3a)
+        2.  [version 1.2: change for using operator values](#org14ee24e)
+    8.  [Running tests](#org5f84de0)
 
 
-<a id="org4278aca"></a>
+<a id="org1c7a274"></a>
 
 # Org listcruncher
 
 [![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher)
 [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
 
-org-listcruncher provides a way to convert org-mode lists into
-a table structure following specific semantics.
+org-listcruncher is a planning tool. Planning using lists is a very
+natural approach, and in terms of a data structure it is similar to
+a mind map. Emacs Org-mode makes it very easy and efficient to work
+with lists, since it offers a lot of functionality for restructuring
+and modifying them.
 
-It is meant as a planning tool, where you keep the history of planning in your
-list with comments, etc, but you can then always get a table structure out of it
-on which you can work with the table functions or even with further code blocks.
+org-listcruncher provides a way to convert such Org-mode lists into
+table structure following specific semantics. This data structure
+can then be operated on by other code blocks, or it can just be
+exported. The list retains all the comments, you can override values
+and keep the history of changes inside of it, while still being able
+to derive an easy data structure as an input for other planning
+tools downstream.
+
+I've used it for the initial stage of planning for bigger projects.
+It was ideal for producing the often complex tables required by
+formal project proposal templates, and at some point I just exported
+the basic structures as a good starting point for continuing with a
+typical project management software.
 
 
-<a id="orgd489b75"></a>
+<a id="org0b7cd0e"></a>
 
 ## Installation
 
@@ -46,7 +59,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="orgf303054"></a>
+<a id="org5bd6b01"></a>
 
 ## Example usage
 
@@ -271,7 +284,7 @@ column name:
     20
 
 
-<a id="orgc5c382a"></a>
+<a id="orgf52e97b"></a>
 
 ## List writing rules
 
@@ -298,7 +311,7 @@ The rules for writing such a planning list are
     value. This allows building lists of words.
 
 
-<a id="org1d103e1"></a>
+<a id="orge2c34b4"></a>
 
 ## Using alternate parsing functions
 
@@ -498,7 +511,7 @@ being taken as that string. I just define as tag/endtag the markup character "\*
 </table>
 
 
-<a id="org1609e67"></a>
+<a id="orgdab564d"></a>
 
 ## Configuration
 
@@ -544,12 +557,12 @@ the following customization variables.
     `org-listcruncher-consolidate-default` documentation.
 
 
-<a id="orga7a7ce6"></a>
+<a id="orgfa5abf0"></a>
 
 ## Further examples
 
 
-<a id="org6ab7c1a"></a>
+<a id="org41f93e3"></a>
 
 ### Adding a table formula to the resulting table
 
@@ -681,12 +694,12 @@ format the table and trigger the formula calculation, so that the user does not 
 do it himself. This function and others can be obtained from [my library of babel example.](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org)
 
 
-<a id="org9b12ff9"></a>
+<a id="org408dc59"></a>
 
 ## Changes
 
 
-<a id="org49be8a3"></a>
+<a id="org9f7fa3a"></a>
 
 ### version 1.0: API change
 
@@ -697,17 +710,18 @@ keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
 
 
-<a id="org26fe019"></a>
+<a id="org14ee24e"></a>
 
 ### version 1.2: change for using operator values
 
 The original syntax of e.g. "-10" did not allow differentiating
 between subtracting 10 or setting value to "-10". Therefore the
-operator use is now defined by "-`", "*`", etc. The old syntax
-is still allowed for all operators except "-".
+operator use is now defined using the operator followed by the
+equal sign: `-=`, `*=`, etc. The old syntax is still
+working to keep backward compatibility, but it is discouraged.
 
 
-<a id="orgd8266aa"></a>
+<a id="org5f84de0"></a>
 
 ## Running tests
 

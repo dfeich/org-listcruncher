@@ -9,12 +9,25 @@
   [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
   #+END_EXPORT
 
-  org-listcruncher provides a way to convert org-mode lists into
-  a table structure following specific semantics.
+  org-listcruncher is a planning tool. Planning using lists is a very
+  natural approach, and in terms of a data structure it is similar to
+  a mind map. Emacs Org-mode makes it very easy and efficient to work
+  with lists, since it offers a lot of functionality for restructuring
+  and modifying them.
 
-  It is meant as a planning tool, where you keep the history of planning in your
-  list with comments, etc, but you can then always get a table structure out of it
-  on which you can work with the table functions or even with further code blocks.
+  org-listcruncher provides a way to convert such Org-mode lists into
+  table structure following specific semantics. This data structure
+  can then be operated on by other code blocks, or it can just be
+  exported. The list retains all the comments, you can override values
+  and keep the history of changes inside of it, while still being able
+  to derive an easy data structure as an input for other planning
+  tools downstream.
+
+  I've used it for the initial stage of planning for bigger projects.
+  It was ideal for producing the often complex tables required by
+  formal project proposal templates, and at some point I just exported
+  the basic structures as a good starting point for continuing with a
+  typical project management software.
 
 ** Installation
 
@@ -325,8 +338,10 @@
 *** version 1.2: change for using operator values
     The original syntax of e.g. "-10" did not allow differentiating
     between subtracting 10 or setting value to "-10". Therefore the
-    operator use is now defined by "-=", "*=", etc. The old syntax
-    is still allowed for all operators except "-".
+    operator use is now defined using the operator followed by the
+    equal sign: ~-=~, ~*=~, etc. The old syntax is still
+    working to keep backward compatibility, but it is discouraged.
+
 ** Running tests
 
    If you have a local cask installation you can run =make test=. Else, you

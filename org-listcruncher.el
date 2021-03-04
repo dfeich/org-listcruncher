@@ -1,10 +1,10 @@
-;;; org-listcruncher.el --- Parse Org mode list contents into table  -*- lexical-binding: t; -*-
+;;; org-listcruncher.el --- Planning tool - Parse Org mode lists into table  -*- lexical-binding: t; -*-
 
 ;; Author: Derek Feichtinger <dfeich@gmail.com>
 ;; Keywords: convenience
 ;; Package-Requires: ((seq "2.3") (emacs "26.1"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
-;; Version: 1.2
+;; Version: 1.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
