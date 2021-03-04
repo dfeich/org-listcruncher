@@ -9,19 +9,19 @@
   [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
   #+END_EXPORT
 
-  org-listcruncher is a planning tool. Planning using lists is a very
+  Org-listcruncher is a planning tool. Planning using lists is a very
   natural approach, and in terms of a data structure it is similar to
   a mind map. Emacs Org-mode makes it very easy and efficient to work
   with lists, since it offers a lot of functionality for restructuring
   and modifying them.
 
-  org-listcruncher provides a way to convert such Org-mode lists into
-  table structure following specific semantics. This data structure
-  can then be operated on by other code blocks, or it can just be
-  exported. The list retains all the comments, you can override values
-  and keep the history of changes inside of it, while still being able
-  to derive an easy data structure as an input for other planning
-  tools downstream.
+  Org-listcruncher provides a way to convert such Org-mode lists into
+  a table structure following specific semantics. This tabular data
+  structure can then be operated on by other code blocks, or it can
+  just be exported. The list can retain all the comments, you can
+  override values and keep the history of changes inside of it, while
+  still being able to derive an easy data structure as an input for
+  other planning tools further downstream.
 
   I've used it for the initial stage of planning for bigger projects.
   It was ideal for producing the often complex tables required by
@@ -52,22 +52,22 @@
    the markup)
 
    #+NAME: lstTest
-   - *item:* item X modified by replacing values (amount: 15, responsible: Peter, end-year: 2020)
-     - modification of item X (amount: 20)
-     - another modification of item X (other: 500)
-       - modification of the modification (other: 299)
+   - *item:* item A modified by replacing values (amount: 15, responsible: Peter, end-year: 2020)
+     - modification of item A (amount: 20)
+     - another modification of item A introducing a column (newcol: 500)
+       - modification of the modification (newcol: 299)
    - illustrating inheritance (responsible: Mary, end-year: 2024)
-     - *item:* item A. Some longer explanation that may run over
+     - *item:* item B. Some longer explanation that may run over
        multiple lines (amount: 10)
-     - *item:* item B (amount: 20)
-     - *item:* item C (amount: 30)
+     - *item:* item C (amount: 20)
+     - *item:* item D (amount: 30, newcol: 35)
        - a modification to item C (amount: 25, responsible: Paul)
-   - *item:* item Y modified by operations (amount: 50, responsible: Peter, end-year: 2026)
+   - *item:* item X modified by operations (amount: 50, responsible: Peter, end-year: 2026)
      - modification by an operation (amount: +=50)
      - modification by an operation (amount: *=1.5)
-   - *item:* item Z entered in scientific format (amount: 1e3, responsible: Mary, end-year: 2025)
+   - *item:* item Y entered in scientific format (amount: 1e3, responsible: Mary, end-year: 2025)
      - modification by an operation (amount: -=1e2)
-   - *item:* illustrating += and -= with strings (amount: 1000, responsible: Peter, end-year: 2025)
+   - *item:* item Z illustrating += and -= with strings (amount: 1000, responsible: Peter, end-year: 2025)
      - adding a string (responsible: +=Paul, end-year: +=1)
      - adding a string (responsible: +=Mary, end-year: +=1)
      - removing a string (responsible: -=Peter)
@@ -80,15 +80,15 @@
    #+END_SRC
 
    #+RESULTS: src-example1
-   | description                         | other | amount | responsible | end-year |
-   |-------------------------------------+-------+--------+-------------+----------|
-   | item X modified by replacing values |   299 |     20 | Peter       |     2020 |
-   | item A                              |       |     10 | Mary        |     2024 |
-   | item B                              |       |     20 | Mary        |     2024 |
-   | item C                              |       |     25 | Paul        |     2024 |
-   | item Y modified by operations       |       |  150.0 | Peter       |     2026 |
-   | item Z entered in scientific format |       |  900.0 | Mary        |     2025 |
-   | illustrating += and -= with strings |       |   1000 | Paul Mary   |     2027 |
+   | description                                | newcol | amount | responsible | end-year |
+   |--------------------------------------------+--------+--------+-------------+----------|
+   | item A modified by replacing values        |    299 |     20 | Peter       |     2020 |
+   | item B                                     |        |     10 | Mary        |     2024 |
+   | item C                                     |        |     20 | Mary        |     2024 |
+   | item D                                     |     35 |     25 | Paul        |     2024 |
+   | item X modified by operations              |        |  150.0 | Peter       |     2026 |
+   | item Y entered in scientific format        |        |  900.0 | Mary        |     2025 |
+   | item Z illustrating += and -= with strings |        |   1000 | Paul Mary   |     2027 |
 
 
    We can also provide an additional argument to affect the order of
@@ -98,15 +98,15 @@
    #+END_SRC
 
    #+RESULTS:
-   | description                         | amount | responsible | other | end-year |
-   |-------------------------------------+--------+-------------+-------+----------|
-   | item X modified by replacing values |     20 | Peter       |   299 |     2020 |
-   | item A                              |     10 | Mary        |       |     2024 |
-   | item B                              |     20 | Mary        |       |     2024 |
-   | item C                              |     25 | Paul        |       |     2024 |
-   | item Y modified by operations       |  150.0 | Peter       |       |     2026 |
-   | item Z entered in scientific format |  900.0 | Mary        |       |     2025 |
-   | illustrating += and -= with strings |   1000 | Paul Mary   |       |     2027 |
+   | description                                | amount | responsible | newcol | end-year |
+   |--------------------------------------------+--------+-------------+--------+----------|
+   | item A modified by replacing values        |     20 | Peter       |    299 |     2020 |
+   | item B                                     |     10 | Mary        |        |     2024 |
+   | item C                                     |     20 | Mary        |        |     2024 |
+   | item D                                     |     25 | Paul        |     35 |     2024 |
+   | item X modified by operations              |  150.0 | Peter       |        |     2026 |
+   | item Y entered in scientific format        |  900.0 | Mary        |        |     2025 |
+   | item Z illustrating += and -= with strings |   1000 | Paul Mary   |        |     2027 |
 
 
 
@@ -119,7 +119,7 @@
    #+END_SRC
 
    #+RESULTS:
-   : 20
+   : 10
    
 ** List writing rules
    
@@ -174,20 +174,20 @@
    Let's test it using this modified list:
       
    #+NAME: lstTest2
-   - *row:* item X modified by replacing values [amount: 15, recurrence: 1, end-year: 2020].
-     - modification of item X [amount: 20]
-     - another modification of item X [other: 500]
-       - modification of the modification [other: 299]
+   - *row:* item A modified by replacing values [amount: 15, recurrence: 1, end-year: 2020].
+     - modification of item A [amount: 20]
+     - another modification of item A [newcol: 500]
+       - modification of the modification [newcol: 299]
    - illustrating inheritance [recurrence: 2, end-year: 2024]
-     - *row:* item A. Some longer explanation that may run over
+     - *row:* item B. Some longer explanation that may run over
        multiple lines [amount: 10]
-     - *row:* item B [amount: 20]
-     - *row:* item C [amount: 30]
-       - a modification to item C [amount: 25, recurrence: 3]
-   - *row:* item Y modified by operations [amount: 50, recurrence: 4, end-year: 2026]
+     - *row:* item C [amount: 20]
+     - *row:* item D [amount: 30]
+       - a modification to item D [amount: 25, recurrence: 3]
+   - *row:* item X modified by operations [amount: 50, recurrence: 4, end-year: 2026]
      - modification by an operation [amount: +50]
      - modification by an operation [amount: *1.5]
-   - *row:* item Z entered in scientific format [amount: 1e3, recurrence: 3, end-year: 2025]
+   - *row:* item Y entered in scientific format [amount: 1e3, recurrence: 3, end-year: 2025]
      - modification by an operation [amount: -=1e2]
 
    We invoke org-listcruncher with the above parsing function:
@@ -203,14 +203,14 @@
    #+END_SRC
 
    #+RESULTS: src-example2
-   | description                         | amount | recurrence | other | end-year |
-   |-------------------------------------+--------+------------+-------+----------|
-   | item X modified by replacing values |     20 |          1 |   299 |     2020 |
-   | item A                              |     10 |          2 |       |     2024 |
-   | item B                              |     20 |          2 |       |     2024 |
-   | item C                              |     25 |          3 |       |     2024 |
-   | item Y modified by operations       |  150.0 |          4 |       |     2026 |
-   | item Z entered in scientific format |  900.0 |          3 |       |     2025 |
+   | description                         | amount | recurrence | newcol | end-year |
+   |-------------------------------------+--------+------------+--------+----------|
+   | item A modified by replacing values |     20 |          1 |    299 |     2020 |
+   | item B                              |     10 |          2 |        |     2024 |
+   | item C                              |     20 |          2 |        |     2024 |
+   | item D                              |     25 |          3 |        |     2024 |
+   | item X modified by operations       |  150.0 |          4 |        |     2026 |
+   | item Y entered in scientific format |  900.0 |          3 |        |     2025 |
 
 
    And another variant allowing to write the list with minimal markup for the tag:
@@ -224,6 +224,8 @@
        - it has other distinguishing features (color: green, form: disk)
      - *item three* is the default
 
+   We invoke the parsing function:
+   
    #+BEGIN_SRC elisp :results value :var listname="lstBoldItems" :exports both
       (org-listcruncher-to-table listname
                         	   :parsefn (org-listcruncher-mk-parseitem-default
@@ -250,8 +252,8 @@
    the above use cases.
 
    One can easily imagine much more sophisticated parsing
-   functions which e.g. could be applied to a cooking recipe written
-   with minimal concessions as to syntax. From such a recipe one could
+   functions which e.g. could be applied to a *cooking recipe written
+   with minimal concessions as to syntax*. From such a recipe one could
    then derive a table of ingredients, their amounts, and cooking
    times; all ready for being displayed as a table, to calculate the
    adapted amounts according to the number of expected guests, and
@@ -268,7 +270,7 @@
      parsing function to use if you call the org-listcruncher
      functions without an explicit =:parsefn= keyword agument.
 
-   - org-listcruncher-consolidate-fn :: This variable defines the
+   - =org-listcruncher-consolidate-fn= :: This variable defines the
      default function for consolidating all the values that a certain
      key got assigned for a list item. The function must accept two
      arguments: KEY and LIST. KEY is the key (i.e. column value) of
@@ -344,8 +346,8 @@
 
 ** Running tests
 
-   If you have a local cask installation you can run =make test=. Else, you
-   can invoke the test manually like this
+   If you have a local [[https://github.com/cask/cask][cask]] installation you can just run =make test=. Else, you
+   can invoke the tests manually like this
    
    #+begin_src bash
      emacs --batch -q -l org-listcruncher.el -l test/test-org-listcruncher.el \
@@ -369,59 +371,78 @@
 
    #+RESULTS:
    #+begin_example
-   ((("amount" "-1e2")
-     ("amount" "1e3")
-     ("recurrence" "3")
+   ((("responsible" "-=Peter")
+     ("responsible" "+=Mary")
+     ("end-year" "+=1")
+     ("responsible" "+=Paul")
+     ("end-year" "+=1")
+     ("amount" "1000")
+     ("responsible" "Peter")
      ("end-year" "2025")
-     ("amount" "*1.5")
-     ("amount" "+50")
+     ("amount" "-=1e2")
+     ("amount" "1e3")
+     ("responsible" "Mary")
+     ("end-year" "2025")
+     ("amount" "*=1.5")
+     ("amount" "+=50")
      ("amount" "50")
-     ("recurrence" "4")
+     ("responsible" "Peter")
      ("end-year" "2026")
      ("amount" "25")
-     ("recurrence" "3")
+     ("responsible" "Paul")
      ("amount" "30")
+     ("newcol" "35")
      ("amount" "20")
      ("amount" "10")
-     ("recurrence" "2")
+     ("responsible" "Mary")
      ("end-year" "2024")
-     ("other" "299")
-     ("other" "500")
+     ("newcol" "299")
+     ("newcol" "500")
      ("amount" "20")
      ("amount" "15")
-     ("recurrence" "1")
+     ("responsible" "Peter")
      ("end-year" "2020"))
-    ((("description" "item X modified by replacing values")
-      ("other" "299")
-      ("other" "500")
+    ((("description" "item A modified by replacing values")
+      ("newcol" "299")
+      ("newcol" "500")
       ("amount" "20")
       ("amount" "15")
-      ("recurrence" "1")
+      ("responsible" "Peter")
       ("end-year" "2020"))
-     (("description" "item A")
-      ("amount" "10")
-      ("recurrence" "2")
-      ("end-year" "2024"))
      (("description" "item B")
-      ("amount" "20")
-      ("recurrence" "2")
+      ("amount" "10")
+      ("responsible" "Mary")
       ("end-year" "2024"))
      (("description" "item C")
-      ("amount" "25")
-      ("recurrence" "3")
-      ("amount" "30")
-      ("recurrence" "2")
+      ("amount" "20")
+      ("responsible" "Mary")
       ("end-year" "2024"))
-     (("description" "item Y modified by operations")
-      ("amount" "*1.5")
-      ("amount" "+50")
+     (("description" "item D")
+      ("amount" "25")
+      ("responsible" "Paul")
+      ("amount" "30")
+      ("newcol" "35")
+      ("responsible" "Mary")
+      ("end-year" "2024"))
+     (("description" "item X modified by operations")
+      ("amount" "*=1.5")
+      ("amount" "+=50")
       ("amount" "50")
-      ("recurrence" "4")
+      ("responsible" "Peter")
       ("end-year" "2026"))
-     (("description" "item Z entered in scientific format")
-      ("amount" "-1e2")
+     (("description" "item Y entered in scientific format")
+      ("amount" "-=1e2")
       ("amount" "1e3")
-      ("recurrence" "3")
+      ("responsible" "Mary")
+      ("end-year" "2025"))
+     (("description" "item Z illustrating += and -= with strings")
+      ("responsible" "-=Peter")
+      ("responsible" "+=Mary")
+      ("end-year" "+=1")
+      ("responsible" "+=Paul")
+      ("end-year" "+=1")
+      ("amount" "1000")
+      ("responsible" "Peter")
       ("end-year" "2025"))))
    #+end_example
 
@@ -438,18 +459,19 @@
   #+END_SRC
 
   #+RESULTS:
-  :RESULTS:
+  :results:
   #+CAPTION: Example 1
-  |description|other|amount|recurrence|end-year|
+  |description|newcol|amount|responsible|end-year|
   |-----
-  |item X modified by replacing values|299|20|1|2020|
-  |item A||10|2|2024|
-  |item B||20|2|2024|
-  |item C||25|3|2024|
-  |item Y modified by operations||150.0|4|2026|
-  |item Z entered in scientific format||900.0|3|2025|
+  |item A modified by replacing values|299|20|Peter|2020|
+  |item B||10|Mary|2024|
+  |item C||20|Mary|2024|
+  |item D|35|25|Paul|2024|
+  |item X modified by operations||150.0|Peter|2026|
+  |item Y entered in scientific format||900.0|Mary|2025|
+  |item Z illustrating += and -= with strings||1000|Paul Mary|2027|
 
-  :END:
+  :end:
 
 * COMMENT Org Babel settings
 Local variables:
