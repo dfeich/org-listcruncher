@@ -150,8 +150,9 @@ The resulting function can be modified by the following keyword arguments:
       (when varstr
 	(setq varlst
 	      (cl-loop for elem in (split-string varstr ", *")
-		       if (string-match-p "[^:]+:[^:]+" elem)
-		       collect (split-string elem " *: *") into result
+		       if (string-match "\\([^:]+\\): *\\(.*\\)" elem)
+		       collect (list (match-string 1 elem)
+                                     (match-string 2 elem)) into result
 		       finally return result)))
       (list outp descr varlst))))
 
