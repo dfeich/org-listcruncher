@@ -4,7 +4,7 @@
 ;; Keywords: convenience
 ;; Package-Requires: ((seq "2.3") (emacs "26.1"))
 ;; Homepage: https://github.com/dfeich/org-listcruncher
-;; Version: 1.3
+;; Version: 1.4
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -163,6 +163,24 @@ The resulting function can be modified by the following keyword arguments:
 Parses the given list item LINE."
   (funcall (org-listcruncher-mk-parseitem-default) line))
 
+(defun org-listcruncher--calc-orgtable (tbl)
+  "Aligns and calculates table functions of the given org table.
+
+The table given in TBL will be processed using the standard
+org mode `org-table-align' and `org-table-recalculate' functions.
+The resulting table is returned in a string."
+  (with-temp-buffer
+    (erase-buffer)
+    (insert tbl)
+    (goto-char (point-min))
+    (org-mode)
+    (while
+        (search-forward-regexp org-table-any-line-regexp nil t)
+      (org-table-align)
+      (org-table-recalculate 'iterate)
+      (goto-char (org-table-end)))
+    (buffer-string)))
+
 (defun org-listcruncher--sparse-to-table (sparselst &optional order)
   "Return list of all unique keys of the list of alists in SPARSELST.
 
@@ -197,7 +215,8 @@ original order."
 ;;;###autoload
 (cl-defun org-listcruncher-to-table (listname
 				     &key (parsefn org-listcruncher-parse-fn)
-				     (order nil))
+				     (order nil)
+                                     (formula nil))
   "Return a table structure based on parsing the Org list with name LISTNAME.
 
 Optional keyword arguments: The user may use the PARSEFN
@@ -205,17 +224,29 @@ FUNCTION argument to define another parsing function for the list
 items.  The ORDER keyword takes a list containing column names as
 its argument for defining the output table's desired columns
 order. The list may contain only a subset of the items.  The
-remaining columns will be added in the original order."
-  (let ((lst
-	 (save-excursion
-	   (goto-char (point-min))
-	   (unless (search-forward-regexp (concat  "^[ \t]*#\\\+NAME: .*" listname) nil t)
-	     (error "No list of this name found: %s" listname))
-	   (forward-line 1)
-	   (org-list-to-lisp))))
-    (org-listcruncher--sparse-to-table
-     (cadr (org-listcruncher--parselist lst parsefn nil nil))
-     order)))
+remaining columns will be added in the original order.
+
+If FORMULA is non-nil the given Calc formula will be calculated
+by org spreadsheet functions (what usually would follow the
+#+TBLFM: in an org spreadsheet table). The result is no longer a
+Lisp table structure but a string containing the fully formatted
+table."
+  (let* ((lst
+	  (save-excursion
+	    (goto-char (point-min))
+	    (unless (search-forward-regexp (concat  "^[ \t]*#\\\+NAME: .*" listname) nil t)
+	      (error "No list of this name found: %s" listname))
+	    (forward-line 1)
+	    (org-list-to-lisp)))
+         (tbl
+          (org-listcruncher--sparse-to-table
+           (cadr (org-listcruncher--parselist lst parsefn nil nil))
+           order)))
+    (if formula
+        (org-listcruncher--calc-orgtable
+         (orgtbl-to-orgtbl (append tbl '(hline ("")))
+                           `(:tend ,(concat "#+TBLFM: " formula))))
+      tbl)))
 
 (defun org-listcruncher--parselist (lst parsefn inheritvars resultlst)
   "Parse an org list into a table structure.

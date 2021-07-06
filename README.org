@@ -283,53 +283,53 @@
      values with operators (e.g. +=10, *=0.5) to modify the previous
      value. Refer to the default function
      =org-listcruncher-consolidate-default= documentation.
-** Further examples
-*** Adding a table formula to the resulting table
-    The primary goal of =org-listcruncher-to-table= is to return a data structure
-    (an org table structure) that can be used for further processing by code, e.g.
-    in a babel block.
+** Using org table spreadsheet formulas to finalize the result
+   The primary goal of =org-listcruncher-to-table= is to return a data structure
+   (an org table structure) that can be used for further processing by code, e.g.
+   in a babel block.
 
-    Often, one will be mainly interested in a fast way to produce an
-    org table that one immediately wants to process with the standard
-    org table functions. Here is an easy recipe that adds a table row
-    for the added up total and an according org table formula.
+   But often, one will be mainly interested in a fast way to produce
+   an org table that one immediately wants to process with the
+   standard org table functions, e.g. just summing up some columns.
+   Listcruncher offers a fast way for these situations:
     
-   #+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both :post lobPostAlignTables(*this*)
-     (princ (orgtbl-to-orgtbl
-     	(append (org-listcruncher-to-table listname) '(hline ("Total")))
-     	'(:tend "#+TBLFM: @>$3=vsum(@I..@II)")))
-   #+END_SRC
+  #+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both
+    (princ (org-listcruncher-to-table listname :formula "@>$1=Total::@>$3=vsum(@I..@II)"))
+  #+END_SRC
 
-   #+RESULTS:
-   | description                         | other | amount | recurrence | end-year |
-   |-------------------------------------+-------+--------+------------+----------|
-   | item X modified by replacing values |   299 |     20 |          1 |     2020 |
-   | item A                              |       |     10 |          2 |     2024 |
-   | item B                              |       |     20 |          2 |     2024 |
-   | item C                              |       |     25 |          3 |     2024 |
-   | item Y modified by operations       |       |  150.0 |          4 |     2026 |
-   | item Z entered in scientific format |       |  900.0 |          3 |     2025 |
-   |-------------------------------------+-------+--------+------------+----------|
-   | Total                               |       |  1125. |            |          |
-   #+TBLFM: @>$3=vsum(@I..@II)
+  #+RESULTS:
+  | description                                | newcol | amount | responsible | end-year |
+  |--------------------------------------------+--------+--------+-------------+----------|
+  | item A modified by replacing values        |    299 |     20 | Peter       |     2020 |
+  | item B                                     |        |     10 | Mary        |     2024 |
+  | item C                                     |        |     20 | Mary        |     2024 |
+  | item D                                     |     35 |     25 | Paul        |     2024 |
+  | item X modified by operations              |        |  150.0 | Peter       |     2026 |
+  | item Y entered in scientific format        |        |  900.0 | Mary        |     2025 |
+  | item Z illustrating += and -= with strings |        |   1000 | Paul Mary   |     2027 |
+  |--------------------------------------------+--------+--------+-------------+----------|
+  | Total                                      |        |  2125. |             |          |
+  #+TBLFM: @>$1=Total::@>$3=vsum(@I..@II)
 
-   *Note:* Since this source block is not returning a table data structure, but an
-   already rendered org table string, one needs to use =:results output=. Since we
-   also do not want the result to be put into an org example block, we also need
-   to add the =raw= flag. So, the whole org block looks like this.
+  Since when using *formula* the source block is not returning a Lisp
+  table data structure, but an already rendered org table string, one
+  needs to use =:results output=. Since we do not want the result to
+  be put into an org example block, we also need to add the =raw=
+  flag. In order to fill out the last row's description we just use
+  for the initial formula the string ="@>$1=Total"=. So, the whole
+  org block now looks like this.
 
-   #+begin_example
-        ,#+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both :post lobPostAlignTables(*this*)
-          (princ (orgtbl-to-orgtbl
-          	(append (org-listcruncher-to-table listname) '(hline ("Total")))
-          	'(:tend "#+TBLFM: @>$3=vsum(@I..@II)")))
-        ,#+END_SRC
-   #+end_example
+  #+begin_example
+       ,#+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both
+         (princ (org-listcruncher-to-table listname :formula "@>$1=Total::@>$3=vsum(@I..@II)"))
+       ,#+END_SRC
+  #+end_example
 
-   In this block I also use a post function: =:post lobPostAlignTables=. This function will
-   format the table and trigger the formula calculation, so that the user does not need to
-   do it himself. This function and others can be obtained from [[https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org][my library of babel example.]]
-   
+  *Note:* In an earlier version of this example I used an external
+  function =lobPostAlignTables= from [[https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org][my library of babel]] to calculate and iterate the
+  table with the formula in an org bable =:post= hook. This is no
+  longer necessary with the addition of the formula feature.
+      
 ** Changes
 *** version 1.0: API change
     I apologize for a backwards incompatible API change for
@@ -343,6 +343,10 @@
     operator use is now defined using the operator followed by the
     equal sign: ~-=~, ~*=~, etc. The old syntax is still
     working to keep backward compatibility, but it is discouraged.
+*** version 1.4: introduction of the :formula feature
+    Org table formulas can be added to the resulting table and
+    listcruncher will invoke the org spreadsheet functions to
+    calculate and align the table.
 
 ** Running tests
 

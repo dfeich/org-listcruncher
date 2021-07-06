@@ -16,7 +16,8 @@
 		     consolidate-vals2
 		     consolidate-vals3
 		     integr-get-field1
-		     integr-list-to-table1))
+		     integr-list-to-table1
+                     integr-calc-table-formula))
 
 
 (defvar testfile "./test-org-listcruncher.org")
@@ -177,3 +178,25 @@
 	     ("item D" "" "-10" "2" "2024")
 	     ("item Y modified by operations" "" 150.0 "4" "2026")
 	     ("item Z entered in scientific format" "" 900.0 "3" "2025")))))
+
+(ert-deftest integr-calc-table-formula ()
+  ;; this test may be a bit too dependent on the exact formatting and whitespace
+  ;; in the result. We leave it for now.
+  (should (equal
+	   (with-temp-buffer
+	     (insert testlist1)
+	     (org-mode)
+	     (org-listcruncher-to-table "lstTest" :formula "@>$1=Total::@>$3=vsum(@I..@II)"))
+           "| description                         | other | amount | recurrence | end-year |
+|-------------------------------------+-------+--------+------------+----------|
+| item X modified by replacing values |   299 |     20 |          1 |     2020 |
+| item A                              |       |     10 |          2 |     2024 |
+| item B                              |       |     20 |          2 |     2024 |
+| item C                              |       |     25 |          3 |     2024 |
+| item D                              |       |    -10 |          2 |     2024 |
+| item Y modified by operations       |       |  150.0 |          4 |     2026 |
+| item Z entered in scientific format |       |  900.0 |          3 |     2025 |
+|-------------------------------------+-------+--------+------------+----------|
+| Total                               |       |  1115. |            |          |
+#+TBLFM: @>$1=Total::@>$3=vsum(@I..@II)"
+	   )))

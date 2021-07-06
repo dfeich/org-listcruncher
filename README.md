@@ -1,21 +1,21 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org2f43ddf)
-    1.  [Installation](#orgdf7674c)
-    2.  [Example usage](#org64ef8af)
-    3.  [List writing rules](#orgf9660e1)
-    4.  [Using alternate parsing functions](#orge091e40)
-    5.  [Configuration](#orgf4285ac)
-    6.  [Further examples](#org0d96377)
-        1.  [Adding a table formula to the resulting table](#orgb2e93e3)
-    7.  [Changes](#orgf0ee277)
-        1.  [version 1.0: API change](#orgef82149)
-        2.  [version 1.2: change for using operator values](#orgb5ca2a8)
-    8.  [Running tests](#orgc39ff51)
+1.  [Org listcruncher](#orgdb9c50b)
+    1.  [Installation](#org5d31fd5)
+    2.  [Example usage](#orgcf382f5)
+    3.  [List writing rules](#org4eb3de9)
+    4.  [Using alternate parsing functions](#orgb951098)
+    5.  [Configuration](#orgdcba497)
+    6.  [Using org table spreadsheet formulas to finalize the result](#orgd29e3c8)
+    7.  [Changes](#org0d93700)
+        1.  [version 1.0: API change](#org7754354)
+        2.  [version 1.2: change for using operator values](#org91e6586)
+        3.  [version 1.4: introduction of the :formula feature](#org095bd96)
+    8.  [Running tests](#org28d5977)
 
 
-<a id="org2f43ddf"></a>
+<a id="orgdb9c50b"></a>
 
 # Org listcruncher
 
@@ -43,7 +43,7 @@ the basic structures as a good starting point for continuing with a
 typical project management software.
 
 
-<a id="orgdf7674c"></a>
+<a id="org5d31fd5"></a>
 
 ## Installation
 
@@ -59,7 +59,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="org64ef8af"></a>
+<a id="orgcf382f5"></a>
 
 ## Example usage
 
@@ -284,7 +284,7 @@ column name:
     10
 
 
-<a id="orgf9660e1"></a>
+<a id="org4eb3de9"></a>
 
 ## List writing rules
 
@@ -311,7 +311,7 @@ The rules for writing such a planning list are
     value. This allows building lists of words.
 
 
-<a id="orge091e40"></a>
+<a id="orgb951098"></a>
 
 ## Using alternate parsing functions
 
@@ -513,7 +513,7 @@ We invoke the parsing function:
 </table>
 
 
-<a id="orgf4285ac"></a>
+<a id="orgdcba497"></a>
 
 ## Configuration
 
@@ -559,27 +559,20 @@ the following customization variables.
     `org-listcruncher-consolidate-default` documentation.
 
 
-<a id="org0d96377"></a>
+<a id="orgd29e3c8"></a>
 
-## Further examples
-
-
-<a id="orgb2e93e3"></a>
-
-### Adding a table formula to the resulting table
+## Using org table spreadsheet formulas to finalize the result
 
 The primary goal of `org-listcruncher-to-table` is to return a data structure
 (an org table structure) that can be used for further processing by code, e.g.
 in a babel block.
 
-Often, one will be mainly interested in a fast way to produce an
-org table that one immediately wants to process with the standard
-org table functions. Here is an easy recipe that adds a table row
-for the added up total and an according org table formula.
+But often, one will be mainly interested in a fast way to produce
+an org table that one immediately wants to process with the
+standard org table functions, e.g. just summing up some columns.
+Listcruncher offers a fast way for these situations:
 
-    (princ (orgtbl-to-orgtbl
-       (append (org-listcruncher-to-table listname) '(hline ("Total")))
-       '(:tend "#+TBLFM: @>$3=vsum(@I..@II)")))
+    (princ (org-listcruncher-to-table listname :formula "@>$1=Total::@>$3=vsum(@I..@II)"))
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -680,28 +673,30 @@ for the added up total and an according org table formula.
 </tbody>
 </table>
 
-**Note:** Since this source block is not returning a table data structure, but an
-already rendered org table string, one needs to use `:results output`. Since we
-also do not want the result to be put into an org example block, we also need
-to add the `raw` flag. So, the whole org block looks like this.
+Since when using **formula** the source block is not returning a Lisp
+table data structure, but an already rendered org table string, one
+needs to use `:results output`. Since we do not want the result to
+be put into an org example block, we also need to add the `raw`
+flag. In order to fill out the last row's description we just use
+for the initial formula the string `"@>$1=Total"`. So, the whole
+org block now looks like this.
 
-    #+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both :post lobPostAlignTables(*this*)
-      (princ (orgtbl-to-orgtbl
-            (append (org-listcruncher-to-table listname) '(hline ("Total")))
-            '(:tend "#+TBLFM: @>$3=vsum(@I..@II)")))
+    #+BEGIN_SRC elisp :results output raw :var listname="lstTest" :exports both
+      (princ (org-listcruncher-to-table listname :formula "@>$1=Total::@>$3=vsum(@I..@II)"))
     #+END_SRC
 
-In this block I also use a post function: `:post lobPostAlignTables`. This function will
-format the table and trigger the formula calculation, so that the user does not need to
-do it himself. This function and others can be obtained from [my library of babel example.](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org)
+**Note:** In an earlier version of this example I used an external
+function `lobPostAlignTables` from [my library of babel](https://github.com/dfeich/org-babel-examples/blob/master/library-of-babel/dfeich-lob.org) to calculate and iterate the
+table with the formula in an org bable `:post` hook. This is no
+longer necessary with the addition of the formula feature.
 
 
-<a id="orgf0ee277"></a>
+<a id="org0d93700"></a>
 
 ## Changes
 
 
-<a id="orgef82149"></a>
+<a id="org7754354"></a>
 
 ### version 1.0: API change
 
@@ -712,7 +707,7 @@ keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
 
 
-<a id="orgb5ca2a8"></a>
+<a id="org91e6586"></a>
 
 ### version 1.2: change for using operator values
 
@@ -723,7 +718,16 @@ equal sign: `-=`, `*=`, etc. The old syntax is still
 working to keep backward compatibility, but it is discouraged.
 
 
-<a id="orgc39ff51"></a>
+<a id="org095bd96"></a>
+
+### version 1.4: introduction of the :formula feature
+
+Org table formulas can be added to the resulting table and
+listcruncher will invoke the org spreadsheet functions to
+calculate and align the table.
+
+
+<a id="org28d5977"></a>
 
 ## Running tests
 
