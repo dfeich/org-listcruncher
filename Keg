@@ -1,0 +1,6 @@
+(source gnu melpa
+        (nongnu . "https://elpa.nongnu.org/nongnu/"))
+(package
+ (org-listcruncher
+  (recipe . (keg :fetcher github :repo "dfeich/org-listcruncher"))))
+
