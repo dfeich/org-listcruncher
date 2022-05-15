@@ -5,7 +5,7 @@
   # file:https://travis....?branch=master fails to be recognized and
   # converted to a markdown image link. So I insert this directly.
   #+BEGIN_EXPORT md
-  [![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher)
+  [![CI workflow](https://github.com/dfeich/org-listcruncher/actions/workflows/CI.yml/badge.svg)](https://github.com/dfeich/org-listcruncher/actions)
   [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
   #+END_EXPORT
 

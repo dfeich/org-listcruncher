@@ -1,25 +1,25 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#orgdb9c50b)
-    1.  [Installation](#org5d31fd5)
-    2.  [Example usage](#orgcf382f5)
-    3.  [List writing rules](#org4eb3de9)
-    4.  [Using alternate parsing functions](#orgb951098)
-    5.  [Configuration](#orgdcba497)
-    6.  [Using org table spreadsheet formulas to finalize the result](#orgd29e3c8)
-    7.  [Changes](#org0d93700)
-        1.  [version 1.0: API change](#org7754354)
-        2.  [version 1.2: change for using operator values](#org91e6586)
-        3.  [version 1.4: introduction of the :formula feature](#org095bd96)
-    8.  [Running tests](#org28d5977)
+1.  [Org listcruncher](#org340d8cb)
+    1.  [Installation](#org36622c2)
+    2.  [Example usage](#orgcea055e)
+    3.  [List writing rules](#org917165f)
+    4.  [Using alternate parsing functions](#org9be3414)
+    5.  [Configuration](#orge8b82dc)
+    6.  [Using org table spreadsheet formulas to finalize the result](#org1bb8c37)
+    7.  [Changes](#orgade995b)
+        1.  [version 1.0: API change](#orgfa8db92)
+        2.  [version 1.2: change for using operator values](#org950e9c1)
+        3.  [version 1.4: introduction of the :formula feature](#org2351801)
+    8.  [Running tests](#org475cf76)
 
 
-<a id="orgdb9c50b"></a>
+<a id="org340d8cb"></a>
 
 # Org listcruncher
 
-[![img](https://travis-ci.org/dfeich/org-listcruncher.svg?branch=master)](https://travis-ci.org/dfeich/org-listcruncher)
+[![CI workflow](https://github.com/dfeich/org-listcruncher/actions/workflows/CI.yml/badge.svg)](https://github.com/dfeich/org-listcruncher/actions)
 [![img](https://melpa.org/packages/org-listcruncher-badge.svg)](https://melpa.org/#/org-listcruncher)
 
 Org-listcruncher is a planning tool. Planning using lists is a very
@@ -43,7 +43,7 @@ the basic structures as a good starting point for continuing with a
 typical project management software.
 
 
-<a id="org5d31fd5"></a>
+<a id="org36622c2"></a>
 
 ## Installation
 
@@ -59,7 +59,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="orgcf382f5"></a>
+<a id="orgcea055e"></a>
 
 ## Example usage
 
@@ -284,7 +284,7 @@ column name:
     10
 
 
-<a id="org4eb3de9"></a>
+<a id="org917165f"></a>
 
 ## List writing rules
 
@@ -311,7 +311,7 @@ The rules for writing such a planning list are
     value. This allows building lists of words.
 
 
-<a id="orgb951098"></a>
+<a id="org9be3414"></a>
 
 ## Using alternate parsing functions
 
@@ -513,7 +513,7 @@ We invoke the parsing function:
 </table>
 
 
-<a id="orgdcba497"></a>
+<a id="orge8b82dc"></a>
 
 ## Configuration
 
@@ -559,7 +559,7 @@ the following customization variables.
     `org-listcruncher-consolidate-default` documentation.
 
 
-<a id="orgd29e3c8"></a>
+<a id="org1bb8c37"></a>
 
 ## Using org table spreadsheet formulas to finalize the result
 
@@ -691,12 +691,12 @@ table with the formula in an org bable `:post` hook. This is no
 longer necessary with the addition of the formula feature.
 
 
-<a id="org0d93700"></a>
+<a id="orgade995b"></a>
 
 ## Changes
 
 
-<a id="org7754354"></a>
+<a id="orgfa8db92"></a>
 
 ### version 1.0: API change
 
@@ -707,7 +707,7 @@ keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
 
 
-<a id="org91e6586"></a>
+<a id="org950e9c1"></a>
 
 ### version 1.2: change for using operator values
 
@@ -718,7 +718,7 @@ equal sign: `-=`, `*=`, etc. The old syntax is still
 working to keep backward compatibility, but it is discouraged.
 
 
-<a id="org095bd96"></a>
+<a id="org2351801"></a>
 
 ### version 1.4: introduction of the :formula feature
 
@@ -727,7 +727,7 @@ listcruncher will invoke the org spreadsheet functions to
 calculate and align the table.
 
 
-<a id="org28d5977"></a>
+<a id="org475cf76"></a>
 
 ## Running tests
 
