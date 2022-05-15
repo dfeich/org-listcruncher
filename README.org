@@ -349,14 +349,17 @@
     calculate and align the table.
 
 ** Running tests
-
-   If you have a local [[https://github.com/cask/cask][cask]] installation you can just run =make test=. Else, you
-   can invoke the tests manually like this
    
-   #+begin_src bash
-     emacs --batch -q -l org-listcruncher.el -l test/test-org-listcruncher.el \
-           --eval "(ert-run-tests-batch-and-exit test-order)"
-   #+end_src
+   If [[https://github.com/conao3/keg.el][keg]] is available for installing the test environment the make
+   targets will use it to install dependencies and run the commands.
+   
+   Just run this inside of the git repository
+   : make test
+
+   If you want to debug a single test, run
+   : TESTNAME=parseitem-default3 make debug
+   The test (in this example =parseitem-default3=) will be run and you
+   will be dropped into a live Emacs session.
 
 ** Tests                                                           :noexport:
 

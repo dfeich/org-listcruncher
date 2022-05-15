@@ -1,21 +1,21 @@
 
 # Table of Contents
 
-1.  [Org listcruncher](#org340d8cb)
-    1.  [Installation](#org36622c2)
-    2.  [Example usage](#orgcea055e)
-    3.  [List writing rules](#org917165f)
-    4.  [Using alternate parsing functions](#org9be3414)
-    5.  [Configuration](#orge8b82dc)
-    6.  [Using org table spreadsheet formulas to finalize the result](#org1bb8c37)
-    7.  [Changes](#orgade995b)
-        1.  [version 1.0: API change](#orgfa8db92)
-        2.  [version 1.2: change for using operator values](#org950e9c1)
-        3.  [version 1.4: introduction of the :formula feature](#org2351801)
-    8.  [Running tests](#org475cf76)
+1.  [Org listcruncher](#orge2e4695)
+    1.  [Installation](#orgea393ec)
+    2.  [Example usage](#org59c78c5)
+    3.  [List writing rules](#org7196933)
+    4.  [Using alternate parsing functions](#org884e7e3)
+    5.  [Configuration](#org2896421)
+    6.  [Using org table spreadsheet formulas to finalize the result](#org5a2e82c)
+    7.  [Changes](#org22c4939)
+        1.  [version 1.0: API change](#orgdaf2a50)
+        2.  [version 1.2: change for using operator values](#org9399d06)
+        3.  [version 1.4: introduction of the :formula feature](#orgc958900)
+    8.  [Running tests](#org10d1dfc)
 
 
-<a id="org340d8cb"></a>
+<a id="orge2e4695"></a>
 
 # Org listcruncher
 
@@ -43,7 +43,7 @@ the basic structures as a good starting point for continuing with a
 typical project management software.
 
 
-<a id="org36622c2"></a>
+<a id="orgea393ec"></a>
 
 ## Installation
 
@@ -59,7 +59,7 @@ Or more barebones, just `require` it.
     (require 'org-listcruncher)
 
 
-<a id="orgcea055e"></a>
+<a id="org59c78c5"></a>
 
 ## Example usage
 
@@ -284,7 +284,7 @@ column name:
     10
 
 
-<a id="org917165f"></a>
+<a id="org7196933"></a>
 
 ## List writing rules
 
@@ -311,7 +311,7 @@ The rules for writing such a planning list are
     value. This allows building lists of words.
 
 
-<a id="org9be3414"></a>
+<a id="org884e7e3"></a>
 
 ## Using alternate parsing functions
 
@@ -513,7 +513,7 @@ We invoke the parsing function:
 </table>
 
 
-<a id="orge8b82dc"></a>
+<a id="org2896421"></a>
 
 ## Configuration
 
@@ -559,7 +559,7 @@ the following customization variables.
     `org-listcruncher-consolidate-default` documentation.
 
 
-<a id="org1bb8c37"></a>
+<a id="org5a2e82c"></a>
 
 ## Using org table spreadsheet formulas to finalize the result
 
@@ -691,12 +691,12 @@ table with the formula in an org bable `:post` hook. This is no
 longer necessary with the addition of the formula feature.
 
 
-<a id="orgade995b"></a>
+<a id="org22c4939"></a>
 
 ## Changes
 
 
-<a id="orgfa8db92"></a>
+<a id="orgdaf2a50"></a>
 
 ### version 1.0: API change
 
@@ -707,7 +707,7 @@ keyword parameters. This will make the functions more future proof
 when further function arguments need to be introduced.
 
 
-<a id="org950e9c1"></a>
+<a id="org9399d06"></a>
 
 ### version 1.2: change for using operator values
 
@@ -718,7 +718,7 @@ equal sign: `-=`, `*=`, etc. The old syntax is still
 working to keep backward compatibility, but it is discouraged.
 
 
-<a id="org2351801"></a>
+<a id="orgc958900"></a>
 
 ### version 1.4: introduction of the :formula feature
 
@@ -727,13 +727,21 @@ listcruncher will invoke the org spreadsheet functions to
 calculate and align the table.
 
 
-<a id="org475cf76"></a>
+<a id="org10d1dfc"></a>
 
 ## Running tests
 
-If you have a local [cask](https://github.com/cask/cask) installation you can just run `make test`. Else, you
-can invoke the tests manually like this
+If [keg](https://github.com/conao3/keg.el) is available for installing the test environment the make
+targets will use it to install dependencies and run the commands.
 
-    emacs --batch -q -l org-listcruncher.el -l test/test-org-listcruncher.el \
-          --eval "(ert-run-tests-batch-and-exit test-order)"
+Just run this inside of the git repository
+
+    make test
+
+If you want to debug a single test, run
+
+    TESTNAME=parseitem-default3 make debug
+
+The test (in this example `parseitem-default3`) will be run and you
+will be dropped into a live Emacs session.
 
